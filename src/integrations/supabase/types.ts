@@ -14,7 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      wishes: {
+        Row: {
+          created_at: string
+          id: string
+          letter: string
+          media_urls: Json
+          owner_id: string
+          recipient_name: string
+          sender_name: string
+          share_token: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          letter?: string
+          media_urls?: Json
+          owner_id: string
+          recipient_name: string
+          sender_name: string
+          share_token?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          letter?: string
+          media_urls?: Json
+          owner_id?: string
+          recipient_name?: string
+          sender_name?: string
+          share_token?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
