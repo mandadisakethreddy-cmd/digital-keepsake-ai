@@ -17,18 +17,18 @@ export const Route = createFileRoute("/")({
 function Landing() {
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
-      <div className="max-w-lg text-center space-y-5">
-        <div className="text-5xl">🎂</div>
-        <h1 className="text-3xl font-bold">Birthday Surprise</h1>
+      <div className="bday-card p-10 max-w-lg text-center space-y-5 bday-pop">
+        <div className="text-6xl">🎂</div>
+        <h1 className="text-4xl bday-title">Birthday Surprise</h1>
         <p className="text-muted-foreground">
           Surprise the birthday boy or girl with their photos, videos and an
-          AI-written letter. Simple to make, easy to share, a memory for life.
+          AI-written letter. Music plays automatically on their special day 🎵
         </p>
         <div className="flex gap-3 justify-center pt-2">
-          <Link to="/auth" className="px-5 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium">
+          <Link to="/auth" className="bday-btn px-6 py-2.5 text-sm">
             Get started
           </Link>
-          <Link to="/auth" className="px-5 py-2 rounded-md border text-sm font-medium">
+          <Link to="/auth" className="px-6 py-2.5 rounded-md border text-sm font-medium bg-white/50">
             Login
           </Link>
         </div>
