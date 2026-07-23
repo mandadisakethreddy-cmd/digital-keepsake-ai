@@ -90,6 +90,8 @@ function NewWish() {
           recipient_name: recipient,
           letter,
           media_urls: media,
+          birthday_date: birthdayDate || null,
+          view_duration_hours: viewHours,
         })
         .select("share_token")
         .single();
