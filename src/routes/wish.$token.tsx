@@ -106,6 +106,9 @@ function MediaSlideshow({ media }: { media: Media[] }) {
   );
 }
 
+function WishView() {
+
+
   const { token } = Route.useParams();
   const [wish, setWish] = useState<Wish | null>(null);
   const [notFound, setNotFound] = useState(false);
