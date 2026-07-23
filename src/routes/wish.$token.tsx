@@ -74,7 +74,38 @@ function computeExpiry(wish: Wish): Date | null {
   return new Date(b.getTime() + wish.view_duration_hours * 3600_000);
 }
 
-function WishView() {
+function MediaSlideshow({ media }: { media: Media[] }) {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    if (media.length <= 1) return;
+    const id = window.setInterval(() => setIdx((i) => (i + 1) % media.length), 4200);
+    return () => window.clearInterval(id);
+  }, [media.length]);
+  return (
+    <section className="slideshow">
+      {media.map((m, i) => (
+        <div key={i} className={`slide ${i === idx ? "active" : ""}`}>
+          {m.type === "image" ? (
+            <img src={m.url} alt="" className={i === idx ? "kenburns" : ""} />
+          ) : (
+            <video src={m.url} autoPlay={i === idx} muted loop playsInline />
+          )}
+        </div>
+      ))}
+      <div className="slide-dots">
+        {media.map((_, i) => (
+          <button
+            key={i}
+            aria-label={`Go to slide ${i + 1}`}
+            onClick={() => setIdx(i)}
+            className={`slide-dot ${i === idx ? "on" : ""}`}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
   const { token } = Route.useParams();
   const [wish, setWish] = useState<Wish | null>(null);
   const [notFound, setNotFound] = useState(false);
