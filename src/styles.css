@@ -138,7 +138,76 @@
   }
 
   body {
-    background-color: var(--color-background);
+    background: linear-gradient(135deg, #ffe4f1 0%, #fff4d6 50%, #e0f2ff 100%);
     color: var(--color-foreground);
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+
+  .dark body {
+    background: linear-gradient(135deg, #2a1a3e 0%, #1e1b4b 50%, #0f172a 100%);
   }
 }
+
+.bday-card {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 182, 193, 0.4);
+  box-shadow: 0 10px 30px -10px rgba(236, 72, 153, 0.25);
+  border-radius: 1rem;
+}
+.dark .bday-card {
+  background: rgba(30, 27, 75, 0.7);
+  border-color: rgba(236, 72, 153, 0.3);
+}
+
+.bday-btn {
+  background: linear-gradient(90deg, #ec4899, #f59e0b);
+  color: white;
+  font-weight: 600;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 14px -4px rgba(236, 72, 153, 0.5);
+  border-radius: 0.6rem;
+}
+.bday-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px -4px rgba(236, 72, 153, 0.6); }
+.bday-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.bday-input {
+  background: rgba(255,255,255,0.8);
+  border: 1px solid rgba(236, 72, 153, 0.25);
+  border-radius: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.9rem;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.dark .bday-input { background: rgba(15,23,42,0.6); color: #f1f5f9; }
+.bday-input:focus { border-color: #ec4899; box-shadow: 0 0 0 3px rgba(236,72,153,0.15); }
+
+.bday-title {
+  background: linear-gradient(90deg, #ec4899, #f59e0b, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+@keyframes float-up {
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+}
+.confetti {
+  position: fixed; top: 0; pointer-events: none;
+  font-size: 1.5rem; animation: float-up linear infinite;
+  z-index: 50;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.bday-pop { animation: pop 0.6s ease-out; }

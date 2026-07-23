@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       wishes: {
         Row: {
+          birthday_date: string | null
           created_at: string
           id: string
           letter: string
@@ -24,8 +25,10 @@ export type Database = {
           recipient_name: string
           sender_name: string
           share_token: string
+          view_duration_hours: number
         }
         Insert: {
+          birthday_date?: string | null
           created_at?: string
           id?: string
           letter?: string
@@ -34,8 +37,10 @@ export type Database = {
           recipient_name: string
           sender_name: string
           share_token?: string
+          view_duration_hours?: number
         }
         Update: {
+          birthday_date?: string | null
           created_at?: string
           id?: string
           letter?: string
@@ -44,6 +49,7 @@ export type Database = {
           recipient_name?: string
           sender_name?: string
           share_token?: string
+          view_duration_hours?: number
         }
         Relationships: []
       }
