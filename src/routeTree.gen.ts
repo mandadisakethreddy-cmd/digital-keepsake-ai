@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WishTokenRouteImport } from './routes/wish.$token'
+import { Route as ApiEnhanceImageRouteImport } from './routes/api/enhance-image'
 import { Route as AuthenticatedNewRouteImport } from './routes/_authenticated/new'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
@@ -34,6 +35,11 @@ const IndexRoute = IndexRouteImport.update({
 const WishTokenRoute = WishTokenRouteImport.update({
   id: '/wish/$token',
   path: '/wish/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiEnhanceImageRoute = ApiEnhanceImageRouteImport.update({
+  id: '/api/enhance-image',
+  path: '/api/enhance-image',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedNewRoute = AuthenticatedNewRouteImport.update({
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/chat': typeof AuthenticatedChatRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/new': typeof AuthenticatedNewRoute
+  '/api/enhance-image': typeof ApiEnhanceImageRoute
   '/wish/$token': typeof WishTokenRoute
 }
 export interface FileRoutesByTo {
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/chat': typeof AuthenticatedChatRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/new': typeof AuthenticatedNewRoute
+  '/api/enhance-image': typeof ApiEnhanceImageRoute
   '/wish/$token': typeof WishTokenRoute
 }
 export interface FileRoutesById {
@@ -76,13 +84,28 @@ export interface FileRoutesById {
   '/_authenticated/chat': typeof AuthenticatedChatRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/new': typeof AuthenticatedNewRoute
+  '/api/enhance-image': typeof ApiEnhanceImageRoute
   '/wish/$token': typeof WishTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/chat' | '/dashboard' | '/new' | '/wish/$token'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/chat'
+    | '/dashboard'
+    | '/new'
+    | '/api/enhance-image'
+    | '/wish/$token'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/chat' | '/dashboard' | '/new' | '/wish/$token'
+  to:
+    | '/'
+    | '/auth'
+    | '/chat'
+    | '/dashboard'
+    | '/new'
+    | '/api/enhance-image'
+    | '/wish/$token'
   id:
     | '__root__'
     | '/'
@@ -91,6 +114,7 @@ export interface FileRouteTypes {
     | '/_authenticated/chat'
     | '/_authenticated/dashboard'
     | '/_authenticated/new'
+    | '/api/enhance-image'
     | '/wish/$token'
   fileRoutesById: FileRoutesById
 }
@@ -98,6 +122,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiEnhanceImageRoute: typeof ApiEnhanceImageRoute
   WishTokenRoute: typeof WishTokenRoute
 }
 
@@ -129,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: '/wish/$token'
       fullPath: '/wish/$token'
       preLoaderRoute: typeof WishTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/enhance-image': {
+      id: '/api/enhance-image'
+      path: '/api/enhance-image'
+      fullPath: '/api/enhance-image'
+      preLoaderRoute: typeof ApiEnhanceImageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/new': {
@@ -174,6 +206,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiEnhanceImageRoute: ApiEnhanceImageRoute,
   WishTokenRoute: WishTokenRoute,
 }
 export const routeTree = rootRouteImport
