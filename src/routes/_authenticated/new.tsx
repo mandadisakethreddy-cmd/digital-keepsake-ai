@@ -48,6 +48,7 @@ function NewWish() {
             url: signed.signedUrl,
             type: file.type.startsWith("video") ? "video" : "image",
             name: file.name,
+            path,
           });
         }
       }
