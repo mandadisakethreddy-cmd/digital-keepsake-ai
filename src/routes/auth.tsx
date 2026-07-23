@@ -1,0 +1,125 @@
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
+import { toast } from "sonner";
+
+export const Route = createFileRoute("/auth")({
+  head: () => ({
+    meta: [
+      { title: "Login or Sign Up — Birthday Surprise" },
+      { name: "description", content: "Log in or create your account to build a birthday surprise." },
+    ],
+  }),
+  component: AuthPage,
+});
+
+function AuthPage() {
+  const navigate = useNavigate();
+  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) navigate({ to: "/dashboard" });
+    });
+  }, [navigate]);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      if (mode === "signup") {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: window.location.origin },
+        });
+        if (error) throw error;
+        toast.success("Account created! You're in.");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      }
+      navigate({ to: "/dashboard" });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleGoogle() {
+    const res = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (res.error) {
+      toast.error("Google sign-in failed");
+      return;
+    }
+    if (res.redirected) return;
+    navigate({ to: "/dashboard" });
+  }
+
+  return (
+    <main className="min-h-screen flex items-center justify-center p-6">
+      <div className="w-full max-w-sm border rounded-lg p-6 space-y-4 bg-card">
+        <div className="text-center">
+          <div className="text-3xl">🎂</div>
+          <h1 className="text-xl font-semibold mt-1">
+            {mode === "login" ? "Welcome back" : "Create your account"}
+          </h1>
+        </div>
+
+        <button
+          onClick={handleGoogle}
+          className="w-full border rounded-md py-2 text-sm hover:bg-accent"
+        >
+          Continue with Google
+        </button>
+
+        <div className="text-center text-xs text-muted-foreground">or</div>
+
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <input
+            type="email"
+            required
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border rounded-md px-3 py-2 text-sm bg-background"
+          />
+          <input
+            type="password"
+            required
+            minLength={6}
+            placeholder="Password (min 6 chars)"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border rounded-md px-3 py-2 text-sm bg-background"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-md bg-primary text-primary-foreground py-2 text-sm font-medium disabled:opacity-60"
+          >
+            {loading ? "Please wait..." : mode === "login" ? "Log in" : "Sign up"}
+          </button>
+        </form>
+
+        <button
+          onClick={() => setMode(mode === "login" ? "signup" : "login")}
+          className="w-full text-sm text-muted-foreground hover:text-foreground"
+        >
+          {mode === "login" ? "New here? Create an account" : "Already have an account? Log in"}
+        </button>
+
+        <div className="text-center">
+          <Link to="/" className="text-xs text-muted-foreground hover:underline">← Back home</Link>
+        </div>
+      </div>
+    </main>
+  );
+}
