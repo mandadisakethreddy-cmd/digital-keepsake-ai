@@ -191,25 +191,42 @@ function NewWish() {
           className="block text-sm"
         />
         {media.length > 0 && (
-          <div className="grid grid-cols-3 gap-2 mt-2">
-            {media.map((m, i) => (
-              <div key={i} className="relative border rounded-xl overflow-hidden aspect-square bg-muted">
-                {m.type === "image" ? (
-                  <img src={m.url} alt={m.name} className="w-full h-full object-cover" />
-                ) : (
-                  <video src={m.url} className="w-full h-full object-cover" />
-                )}
-                <button
-                  onClick={() => setMedia((arr) => arr.filter((_, idx) => idx !== i))}
-                  className="absolute top-1 right-1 bg-black/60 text-white text-xs px-1.5 rounded-full"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-          </div>
+          <>
+            <p className="text-xs text-muted-foreground">Tap ✨ to colorize a photo with AI (adds a magical, vibrant birthday vibe).</p>
+            <div className="grid grid-cols-3 gap-2 mt-2">
+              {media.map((m, i) => (
+                <div key={i} className="relative border rounded-xl overflow-hidden aspect-square bg-muted">
+                  {m.type === "image" ? (
+                    <img src={m.url} alt={m.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <video src={m.url} className="w-full h-full object-cover" />
+                  )}
+                  {m.enhancing && (
+                    <div className="absolute inset-0 bg-black/50 text-white text-xs flex items-center justify-center">
+                      ✨ Colorizing…
+                    </div>
+                  )}
+                  <button
+                    onClick={() => setMedia((arr) => arr.filter((_, idx) => idx !== i))}
+                    className="absolute top-1 right-1 bg-black/60 text-white text-xs w-5 h-5 rounded-full"
+                  >
+                    ×
+                  </button>
+                  {m.type === "image" && !m.enhancing && (
+                    <button
+                      onClick={() => handleEnhance(i)}
+                      className="absolute bottom-1 left-1 right-1 bg-gradient-to-r from-pink-500 to-amber-400 text-white text-[10px] py-1 rounded-md font-semibold"
+                    >
+                      ✨ Colorize
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </section>
+
 
       <section className="bday-card p-5 space-y-2">
         <label className="text-sm font-medium">💭 Share your feelings & memories (for the AI)</label>
