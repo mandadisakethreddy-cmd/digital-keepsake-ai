@@ -59,6 +59,29 @@ function NewWish() {
     }
   }
 
+  async function handleEnhance(index: number) {
+    const item = media[index];
+    if (!item?.path || item.type !== "image") return;
+    setMedia((arr) => arr.map((m, i) => (i === index ? { ...m, enhancing: true } : m)));
+    try {
+      const res = await fetch("/api/enhance-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path: item.path }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const { url, path } = (await res.json()) as { url: string; path: string };
+      setMedia((arr) =>
+        arr.map((m, i) => (i === index ? { ...m, url, path, enhancing: false } : m)),
+      );
+      toast.success("✨ Colorized!");
+    } catch (err) {
+      setMedia((arr) => arr.map((m, i) => (i === index ? { ...m, enhancing: false } : m)));
+      toast.error(err instanceof Error ? err.message : "Enhance failed");
+    }
+  }
+
+
   async function handleGenerate() {
     if (!sender || !recipient) {
       toast.error("Please add sender and recipient names");
