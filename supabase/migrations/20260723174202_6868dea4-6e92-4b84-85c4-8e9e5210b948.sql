@@ -1,0 +1,1 @@
+ALTER TABLE public.wishes ADD COLUMN IF NOT EXISTS birthday_date date, ADD COLUMN IF NOT EXISTS view_duration_hours integer NOT NULL DEFAULT 24;
