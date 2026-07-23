@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_authenticated/new")({
   component: NewWish,
 });
 
-type MediaItem = { url: string; type: "image" | "video"; name: string };
+type MediaItem = { url: string; type: "image" | "video"; name: string; path?: string; enhancing?: boolean };
 
 function NewWish() {
   const navigate = useNavigate();
