@@ -240,21 +240,18 @@ function WishView() {
         )}
       </header>
 
-      {wish.media_urls.length > 0 && (
-        <section className="grid grid-cols-2 gap-3">
-          {wish.media_urls.map((m, i) =>
-            m.type === "image" ? (
-              <img key={i} src={m.url} alt="" className="w-full rounded-xl object-cover aspect-square shadow-md" />
-            ) : (
-              <video key={i} src={m.url} controls className="w-full rounded-xl aspect-square object-cover shadow-md" />
-            ),
-          )}
-        </section>
-      )}
+      {wish.media_urls.length > 0 && <MediaSlideshow media={wish.media_urls} />}
 
-      <section className="bday-card p-6 whitespace-pre-wrap text-sm leading-relaxed">
-        {wish.letter}
+      <section className="letter-frame">
+        <div className="letter-inner whitespace-pre-wrap text-sm leading-relaxed">
+          <div className="letter-corner tl">❦</div>
+          <div className="letter-corner tr">❦</div>
+          <div className="letter-corner bl">❦</div>
+          <div className="letter-corner br">❦</div>
+          {wish.letter}
+        </div>
       </section>
+
 
       <footer className="text-center text-xs text-muted-foreground pb-6">
         Made with ❤️ by {wish.sender_name}
