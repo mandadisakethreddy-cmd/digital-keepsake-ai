@@ -235,7 +235,11 @@ function WishView() {
           <h1 className="text-2xl bday-title">A surprise is waiting for you</h1>
           <p className="text-sm text-muted-foreground">
             {wish.sender_name} has prepared something special for your birthday.
-            <br />Come back on the big day!
+            {unlockAt && (
+              <>
+                <br />Unlocks at {unlockAt.toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+              </>
+            )}
           </p>
           <div className="text-3xl font-mono font-bold bday-title">{countdown}</div>
         </div>
