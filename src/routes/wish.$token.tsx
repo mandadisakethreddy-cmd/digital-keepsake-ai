@@ -135,7 +135,7 @@ function WishView() {
     (async () => {
       const { data } = await supabase
         .from("wishes")
-        .select("sender_name, recipient_name, letter, media_urls, birthday_date, view_duration_hours, created_at")
+        .select("sender_name, recipient_name, letter, media_urls, birthday_date, birthday_time, view_duration_hours, created_at")
         .eq("share_token", token)
         .maybeSingle();
       if (!data) setNotFound(true);
@@ -143,10 +143,11 @@ function WishView() {
     })();
   }, [token]);
 
-  const bdayToday = useMemo(() => (wish ? isBirthdayToday(wish.birthday_date) : false), [wish]);
+  const unlocked = useMemo(() => (wish ? isUnlocked(wish) : false), [wish]);
   const expiry = useMemo(() => (wish ? computeExpiry(wish) : null), [wish]);
+  const unlockAt = useMemo(() => (wish ? unlockDate(wish) : null), [wish]);
   const expired = expiry ? expiry.getTime() < Date.now() : false;
-  const waiting = wish?.birthday_date && !bdayToday && !expired;
+  const waiting = !!wish?.birthday_date && !unlocked && !expired;
 
   // Countdown
   useEffect(() => {
@@ -154,10 +155,11 @@ function WishView() {
     const tick = () => {
       const target = waiting
         ? (() => {
-            const b = new Date(wish.birthday_date + "T00:00:00");
-            b.setFullYear(new Date().getFullYear());
-            if (b.getTime() < Date.now()) b.setFullYear(b.getFullYear() + 1);
-            return b;
+            const u = unlockAt;
+            if (u && u.getTime() < Date.now()) {
+              return new Date(u.getFullYear() + 1, u.getMonth(), u.getDate(), u.getHours(), u.getMinutes(), 0);
+            }
+            return u;
           })()
         : expiry;
       if (!target) return;
@@ -172,7 +174,7 @@ function WishView() {
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
-  }, [wish, waiting, expiry]);
+  }, [wish, waiting, expiry, unlockAt]);
 
   // Auto-play music loop when opened on birthday
   function startExperience() {
