@@ -185,25 +185,6 @@ function WishView() {
     );
   }
 
-  if (waiting) {
-    return (
-      <main className="min-h-screen flex items-center justify-center p-6">
-        <div className="bday-card p-8 text-center space-y-4 max-w-md">
-          <div className="text-6xl">🎁</div>
-          <h1 className="text-2xl bday-title">A surprise is waiting for you</h1>
-          <p className="text-sm text-muted-foreground">
-            {wish.sender_name} has prepared something special for your birthday.
-            {unlockAt && (
-              <>
-                <br />Unlocks at {unlockAt.toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
-              </>
-            )}
-          </p>
-          <div className="text-3xl font-mono font-bold bday-title">{countdown}</div>
-        </div>
-      </main>
-    );
-  }
 
   if (!started) {
     return (
@@ -227,7 +208,7 @@ function WishView() {
 
   return (
     <main className="min-h-screen max-w-2xl mx-auto p-6 space-y-8 relative">
-      {unlocked && (
+      {(
         <>
           {["🎈","🎉","🎂","🎁","✨","🎊"].map((e, i) => (
             <span
