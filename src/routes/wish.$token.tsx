@@ -56,36 +56,9 @@ function playHappyBirthday(ctx: AudioContext) {
   return t - now;
 }
 
-function unlockDate(wish: Wish): Date | null {
-  if (!wish.birthday_date) return null;
-  const time = wish.birthday_time || "00:00";
-  // Use this year's occurrence
-  const [y, m, d] = wish.birthday_date.split("-").map(Number);
-  const [hh, mm] = time.split(":").map(Number);
-  const now = new Date();
-  let target = new Date(now.getFullYear(), (m ?? 1) - 1, d ?? 1, hh ?? 0, mm ?? 0, 0);
-  // If this year's occurrence + window already fully passed, roll to next year for waiting screens
-  void y;
-  return target;
-}
-
-function isUnlocked(wish: Wish): boolean {
-  const u = unlockDate(wish);
-  if (!u) return true;
-  return Date.now() >= u.getTime();
-}
-
-function computeExpiry(wish: Wish): Date | null {
-  const u = unlockDate(wish);
-  if (!u) return null;
-  let start = u;
-  const expiry = new Date(start.getTime() + wish.view_duration_hours * 3600_000);
-  if (expiry.getTime() < Date.now()) {
-    // roll to next year
-    start = new Date(u.getFullYear() + 1, u.getMonth(), u.getDate(), u.getHours(), u.getMinutes(), 0);
-    return new Date(start.getTime() + wish.view_duration_hours * 3600_000);
-  }
-  return expiry;
+function computeExpiry(wish: Wish): Date {
+  const start = new Date(wish.created_at).getTime();
+  return new Date(start + wish.view_duration_hours * 3600_000);
 }
 
 function MediaSlideshow({ media }: { media: Media[] }) {
@@ -143,27 +116,14 @@ function WishView() {
     })();
   }, [token]);
 
-  const unlocked = useMemo(() => (wish ? isUnlocked(wish) : false), [wish]);
   const expiry = useMemo(() => (wish ? computeExpiry(wish) : null), [wish]);
-  const unlockAt = useMemo(() => (wish ? unlockDate(wish) : null), [wish]);
   const expired = expiry ? expiry.getTime() < Date.now() : false;
-  const waiting = !!wish?.birthday_date && !unlocked && !expired;
 
-  // Countdown
+  // Countdown to expiry
   useEffect(() => {
-    if (!wish) return;
+    if (!expiry) return;
     const tick = () => {
-      const target = waiting
-        ? (() => {
-            const u = unlockAt;
-            if (u && u.getTime() < Date.now()) {
-              return new Date(u.getFullYear() + 1, u.getMonth(), u.getDate(), u.getHours(), u.getMinutes(), 0);
-            }
-            return u;
-          })()
-        : expiry;
-      if (!target) return;
-      const diff = target.getTime() - Date.now();
+      const diff = expiry.getTime() - Date.now();
       if (diff <= 0) { setCountdown(""); return; }
       const d = Math.floor(diff / 86400_000);
       const h = Math.floor((diff / 3600_000) % 24);
@@ -174,12 +134,10 @@ function WishView() {
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
-  }, [wish, waiting, expiry, unlockAt]);
+  }, [expiry]);
 
-  // Auto-play music loop when opened on birthday
   function startExperience() {
     setStarted(true);
-    if (!unlocked) return;
     try {
       const Ctx = window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       const ctx = new Ctx();
@@ -227,25 +185,6 @@ function WishView() {
     );
   }
 
-  if (waiting) {
-    return (
-      <main className="min-h-screen flex items-center justify-center p-6">
-        <div className="bday-card p-8 text-center space-y-4 max-w-md">
-          <div className="text-6xl">🎁</div>
-          <h1 className="text-2xl bday-title">A surprise is waiting for you</h1>
-          <p className="text-sm text-muted-foreground">
-            {wish.sender_name} has prepared something special for your birthday.
-            {unlockAt && (
-              <>
-                <br />Unlocks at {unlockAt.toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
-              </>
-            )}
-          </p>
-          <div className="text-3xl font-mono font-bold bday-title">{countdown}</div>
-        </div>
-      </main>
-    );
-  }
 
   if (!started) {
     return (
@@ -269,7 +208,7 @@ function WishView() {
 
   return (
     <main className="min-h-screen max-w-2xl mx-auto p-6 space-y-8 relative">
-      {unlocked && (
+      {(
         <>
           {["🎈","🎉","🎂","🎁","✨","🎊"].map((e, i) => (
             <span

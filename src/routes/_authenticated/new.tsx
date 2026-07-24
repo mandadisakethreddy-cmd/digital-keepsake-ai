@@ -19,7 +19,7 @@ function NewWish() {
   const [sender, setSender] = useState("");
   const [recipient, setRecipient] = useState("");
   const [birthdayDate, setBirthdayDate] = useState("");
-  const [birthdayTime, setBirthdayTime] = useState("09:00");
+  
   const [viewHours, setViewHours] = useState(24);
   const [feelings, setFeelings] = useState("");
   const [tone, setTone] = useState<"emotional" | "funny" | "romantic" | "cute">("emotional");
@@ -116,7 +116,7 @@ function NewWish() {
           letter,
           media_urls: media,
           birthday_date: birthdayDate || null,
-          birthday_time: birthdayDate ? birthdayTime : null,
+          birthday_time: null,
           view_duration_hours: viewHours,
         })
         .select("share_token")
@@ -154,7 +154,7 @@ function NewWish() {
         />
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs font-medium block mb-1">🎉 Birthday date</label>
+            <label className="text-xs font-medium block mb-1">🎉 Birthday date (optional)</label>
             <input
               type="date"
               className="bday-input"
@@ -163,16 +163,6 @@ function NewWish() {
             />
           </div>
           <div>
-            <label className="text-xs font-medium block mb-1">🕐 Unlock time</label>
-            <input
-              type="time"
-              className="bday-input"
-              value={birthdayTime}
-              onChange={(e) => setBirthdayTime(e.target.value)}
-              disabled={!birthdayDate}
-            />
-          </div>
-          <div className="col-span-2">
             <label className="text-xs font-medium block mb-1">⏰ Viewable for</label>
             <select
               className="bday-input"
@@ -189,7 +179,7 @@ function NewWish() {
           </div>
         </div>
         <p className="text-xs text-muted-foreground">
-          🎵 The surprise unlocks at the exact time you pick on the birthday. After the viewing window, the link expires.
+          🎁 The recipient can open the surprise any time — the link stays live for the viewing window you pick (starting from now).
         </p>
       </section>
 
