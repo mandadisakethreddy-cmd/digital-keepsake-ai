@@ -163,6 +163,16 @@ function NewWish() {
             />
           </div>
           <div>
+            <label className="text-xs font-medium block mb-1">🕐 Unlock time</label>
+            <input
+              type="time"
+              className="bday-input"
+              value={birthdayTime}
+              onChange={(e) => setBirthdayTime(e.target.value)}
+              disabled={!birthdayDate}
+            />
+          </div>
+          <div className="col-span-2">
             <label className="text-xs font-medium block mb-1">⏰ Viewable for</label>
             <select
               className="bday-input"
@@ -179,7 +189,7 @@ function NewWish() {
           </div>
         </div>
         <p className="text-xs text-muted-foreground">
-          🎵 Birthday music will auto-play on the recipient's birthday. After the time limit, the link expires.
+          🎵 The surprise unlocks at the exact time you pick on the birthday. After the viewing window, the link expires.
         </p>
       </section>
 
