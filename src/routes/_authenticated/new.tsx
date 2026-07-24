@@ -19,6 +19,7 @@ function NewWish() {
   const [sender, setSender] = useState("");
   const [recipient, setRecipient] = useState("");
   const [birthdayDate, setBirthdayDate] = useState("");
+  const [birthdayTime, setBirthdayTime] = useState("09:00");
   const [viewHours, setViewHours] = useState(24);
   const [feelings, setFeelings] = useState("");
   const [tone, setTone] = useState<"emotional" | "funny" | "romantic" | "cute">("emotional");
