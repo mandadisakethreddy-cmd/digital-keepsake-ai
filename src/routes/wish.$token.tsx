@@ -21,6 +21,7 @@ type Wish = {
   letter: string;
   media_urls: Media[];
   birthday_date: string | null;
+  birthday_time: string | null;
   view_duration_hours: number;
   created_at: string;
 };
