@@ -56,23 +56,36 @@ function playHappyBirthday(ctx: AudioContext) {
   return t - now;
 }
 
-function isBirthdayToday(bd: string | null): boolean {
-  if (!bd) return true; // no date set = always considered "birthday"
-  const today = new Date();
-  const b = new Date(bd + "T00:00:00");
-  return today.getMonth() === b.getMonth() && today.getDate() === b.getDate();
+function unlockDate(wish: Wish): Date | null {
+  if (!wish.birthday_date) return null;
+  const time = wish.birthday_time || "00:00";
+  // Use this year's occurrence
+  const [y, m, d] = wish.birthday_date.split("-").map(Number);
+  const [hh, mm] = time.split(":").map(Number);
+  const now = new Date();
+  let target = new Date(now.getFullYear(), (m ?? 1) - 1, d ?? 1, hh ?? 0, mm ?? 0, 0);
+  // If this year's occurrence + window already fully passed, roll to next year for waiting screens
+  void y;
+  return target;
+}
+
+function isUnlocked(wish: Wish): boolean {
+  const u = unlockDate(wish);
+  if (!u) return true;
+  return Date.now() >= u.getTime();
 }
 
 function computeExpiry(wish: Wish): Date | null {
-  if (!wish.birthday_date) return null;
-  const b = new Date(wish.birthday_date + "T00:00:00");
-  // Set to this year's birthday
-  const now = new Date();
-  b.setFullYear(now.getFullYear());
-  if (b.getTime() + wish.view_duration_hours * 3600_000 < now.getTime()) {
-    b.setFullYear(now.getFullYear() + 1); // next occurrence
+  const u = unlockDate(wish);
+  if (!u) return null;
+  let start = u;
+  const expiry = new Date(start.getTime() + wish.view_duration_hours * 3600_000);
+  if (expiry.getTime() < Date.now()) {
+    // roll to next year
+    start = new Date(u.getFullYear() + 1, u.getMonth(), u.getDate(), u.getHours(), u.getMinutes(), 0);
+    return new Date(start.getTime() + wish.view_duration_hours * 3600_000);
   }
-  return new Date(b.getTime() + wish.view_duration_hours * 3600_000);
+  return expiry;
 }
 
 function MediaSlideshow({ media }: { media: Media[] }) {
