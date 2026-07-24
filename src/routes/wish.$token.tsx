@@ -179,7 +179,7 @@ function WishView() {
   // Auto-play music loop when opened on birthday
   function startExperience() {
     setStarted(true);
-    if (!bdayToday) return;
+    if (!unlocked) return;
     try {
       const Ctx = window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       const ctx = new Ctx();
@@ -265,7 +265,7 @@ function WishView() {
 
   return (
     <main className="min-h-screen max-w-2xl mx-auto p-6 space-y-8 relative">
-      {bdayToday && (
+      {unlocked && (
         <>
           {["🎈","🎉","🎂","🎁","✨","🎊"].map((e, i) => (
             <span
