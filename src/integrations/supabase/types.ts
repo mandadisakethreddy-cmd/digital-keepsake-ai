@@ -17,6 +17,7 @@ export type Database = {
       wishes: {
         Row: {
           birthday_date: string | null
+          birthday_time: string | null
           created_at: string
           id: string
           letter: string
@@ -29,6 +30,7 @@ export type Database = {
         }
         Insert: {
           birthday_date?: string | null
+          birthday_time?: string | null
           created_at?: string
           id?: string
           letter?: string
@@ -41,6 +43,7 @@ export type Database = {
         }
         Update: {
           birthday_date?: string | null
+          birthday_time?: string | null
           created_at?: string
           id?: string
           letter?: string

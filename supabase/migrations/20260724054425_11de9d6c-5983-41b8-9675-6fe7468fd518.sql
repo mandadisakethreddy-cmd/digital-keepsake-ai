@@ -1,0 +1,1 @@
+ALTER TABLE public.wishes ADD COLUMN birthday_time time;
