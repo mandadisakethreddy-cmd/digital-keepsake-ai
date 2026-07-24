@@ -21,6 +21,7 @@ type Wish = {
   letter: string;
   media_urls: Media[];
   birthday_date: string | null;
+  birthday_time: string | null;
   view_duration_hours: number;
   created_at: string;
 };
@@ -55,23 +56,36 @@ function playHappyBirthday(ctx: AudioContext) {
   return t - now;
 }
 
-function isBirthdayToday(bd: string | null): boolean {
-  if (!bd) return true; // no date set = always considered "birthday"
-  const today = new Date();
-  const b = new Date(bd + "T00:00:00");
-  return today.getMonth() === b.getMonth() && today.getDate() === b.getDate();
+function unlockDate(wish: Wish): Date | null {
+  if (!wish.birthday_date) return null;
+  const time = wish.birthday_time || "00:00";
+  // Use this year's occurrence
+  const [y, m, d] = wish.birthday_date.split("-").map(Number);
+  const [hh, mm] = time.split(":").map(Number);
+  const now = new Date();
+  let target = new Date(now.getFullYear(), (m ?? 1) - 1, d ?? 1, hh ?? 0, mm ?? 0, 0);
+  // If this year's occurrence + window already fully passed, roll to next year for waiting screens
+  void y;
+  return target;
+}
+
+function isUnlocked(wish: Wish): boolean {
+  const u = unlockDate(wish);
+  if (!u) return true;
+  return Date.now() >= u.getTime();
 }
 
 function computeExpiry(wish: Wish): Date | null {
-  if (!wish.birthday_date) return null;
-  const b = new Date(wish.birthday_date + "T00:00:00");
-  // Set to this year's birthday
-  const now = new Date();
-  b.setFullYear(now.getFullYear());
-  if (b.getTime() + wish.view_duration_hours * 3600_000 < now.getTime()) {
-    b.setFullYear(now.getFullYear() + 1); // next occurrence
+  const u = unlockDate(wish);
+  if (!u) return null;
+  let start = u;
+  const expiry = new Date(start.getTime() + wish.view_duration_hours * 3600_000);
+  if (expiry.getTime() < Date.now()) {
+    // roll to next year
+    start = new Date(u.getFullYear() + 1, u.getMonth(), u.getDate(), u.getHours(), u.getMinutes(), 0);
+    return new Date(start.getTime() + wish.view_duration_hours * 3600_000);
   }
-  return new Date(b.getTime() + wish.view_duration_hours * 3600_000);
+  return expiry;
 }
 
 function MediaSlideshow({ media }: { media: Media[] }) {
@@ -121,7 +135,7 @@ function WishView() {
     (async () => {
       const { data } = await supabase
         .from("wishes")
-        .select("sender_name, recipient_name, letter, media_urls, birthday_date, view_duration_hours, created_at")
+        .select("sender_name, recipient_name, letter, media_urls, birthday_date, birthday_time, view_duration_hours, created_at")
         .eq("share_token", token)
         .maybeSingle();
       if (!data) setNotFound(true);
@@ -129,10 +143,11 @@ function WishView() {
     })();
   }, [token]);
 
-  const bdayToday = useMemo(() => (wish ? isBirthdayToday(wish.birthday_date) : false), [wish]);
+  const unlocked = useMemo(() => (wish ? isUnlocked(wish) : false), [wish]);
   const expiry = useMemo(() => (wish ? computeExpiry(wish) : null), [wish]);
+  const unlockAt = useMemo(() => (wish ? unlockDate(wish) : null), [wish]);
   const expired = expiry ? expiry.getTime() < Date.now() : false;
-  const waiting = wish?.birthday_date && !bdayToday && !expired;
+  const waiting = !!wish?.birthday_date && !unlocked && !expired;
 
   // Countdown
   useEffect(() => {
@@ -140,10 +155,11 @@ function WishView() {
     const tick = () => {
       const target = waiting
         ? (() => {
-            const b = new Date(wish.birthday_date + "T00:00:00");
-            b.setFullYear(new Date().getFullYear());
-            if (b.getTime() < Date.now()) b.setFullYear(b.getFullYear() + 1);
-            return b;
+            const u = unlockAt;
+            if (u && u.getTime() < Date.now()) {
+              return new Date(u.getFullYear() + 1, u.getMonth(), u.getDate(), u.getHours(), u.getMinutes(), 0);
+            }
+            return u;
           })()
         : expiry;
       if (!target) return;
@@ -158,12 +174,12 @@ function WishView() {
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
-  }, [wish, waiting, expiry]);
+  }, [wish, waiting, expiry, unlockAt]);
 
   // Auto-play music loop when opened on birthday
   function startExperience() {
     setStarted(true);
-    if (!bdayToday) return;
+    if (!unlocked) return;
     try {
       const Ctx = window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       const ctx = new Ctx();
@@ -219,7 +235,11 @@ function WishView() {
           <h1 className="text-2xl bday-title">A surprise is waiting for you</h1>
           <p className="text-sm text-muted-foreground">
             {wish.sender_name} has prepared something special for your birthday.
-            <br />Come back on the big day!
+            {unlockAt && (
+              <>
+                <br />Unlocks at {unlockAt.toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+              </>
+            )}
           </p>
           <div className="text-3xl font-mono font-bold bday-title">{countdown}</div>
         </div>
@@ -249,7 +269,7 @@ function WishView() {
 
   return (
     <main className="min-h-screen max-w-2xl mx-auto p-6 space-y-8 relative">
-      {bdayToday && (
+      {unlocked && (
         <>
           {["🎈","🎉","🎂","🎁","✨","🎊"].map((e, i) => (
             <span
