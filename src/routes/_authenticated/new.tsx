@@ -116,6 +116,7 @@ function NewWish() {
           letter,
           media_urls: media,
           birthday_date: birthdayDate || null,
+          birthday_time: birthdayDate ? birthdayTime : null,
           view_duration_hours: viewHours,
         })
         .select("share_token")
