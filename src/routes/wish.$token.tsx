@@ -116,27 +116,14 @@ function WishView() {
     })();
   }, [token]);
 
-  const unlocked = useMemo(() => (wish ? isUnlocked(wish) : false), [wish]);
   const expiry = useMemo(() => (wish ? computeExpiry(wish) : null), [wish]);
-  const unlockAt = useMemo(() => (wish ? unlockDate(wish) : null), [wish]);
   const expired = expiry ? expiry.getTime() < Date.now() : false;
-  const waiting = !!wish?.birthday_date && !unlocked && !expired;
 
-  // Countdown
+  // Countdown to expiry
   useEffect(() => {
-    if (!wish) return;
+    if (!expiry) return;
     const tick = () => {
-      const target = waiting
-        ? (() => {
-            const u = unlockAt;
-            if (u && u.getTime() < Date.now()) {
-              return new Date(u.getFullYear() + 1, u.getMonth(), u.getDate(), u.getHours(), u.getMinutes(), 0);
-            }
-            return u;
-          })()
-        : expiry;
-      if (!target) return;
-      const diff = target.getTime() - Date.now();
+      const diff = expiry.getTime() - Date.now();
       if (diff <= 0) { setCountdown(""); return; }
       const d = Math.floor(diff / 86400_000);
       const h = Math.floor((diff / 3600_000) % 24);
@@ -147,12 +134,10 @@ function WishView() {
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
-  }, [wish, waiting, expiry, unlockAt]);
+  }, [expiry]);
 
-  // Auto-play music loop when opened on birthday
   function startExperience() {
     setStarted(true);
-    if (!unlocked) return;
     try {
       const Ctx = window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       const ctx = new Ctx();
