@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getWishByToken } from "@/lib/wish.functions";
 
 export const Route = createFileRoute("/wish/$token")({
   head: () => ({
