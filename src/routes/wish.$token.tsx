@@ -56,8 +56,14 @@ function playHappyBirthday(ctx: AudioContext) {
   return t - now;
 }
 
+function unlockDate(wish: Wish): Date {
+  if (!wish.birthday_date) return new Date(wish.created_at);
+  const time = wish.birthday_time ?? "00:00:00";
+  return new Date(`${wish.birthday_date}T${time.slice(0, 8).padEnd(8, ":00")}`);
+}
+
 function computeExpiry(wish: Wish): Date {
-  const start = new Date(wish.created_at).getTime();
+  const start = unlockDate(wish).getTime();
   return new Date(start + wish.view_duration_hours * 3600_000);
 }
 
