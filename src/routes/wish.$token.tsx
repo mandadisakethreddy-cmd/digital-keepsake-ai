@@ -122,14 +122,20 @@ function WishView() {
     })();
   }, [token]);
 
+  const unlock = useMemo(() => (wish ? unlockDate(wish) : null), [wish]);
   const expiry = useMemo(() => (wish ? computeExpiry(wish) : null), [wish]);
-  const expired = expiry ? expiry.getTime() < Date.now() : false;
+  const [now, setNow] = useState(() => Date.now());
+  const expired = expiry ? expiry.getTime() < now : false;
+  const locked = unlock ? unlock.getTime() > now : false;
 
-  // Countdown to expiry
+  // Countdown to unlock (while locked) or expiry
   useEffect(() => {
-    if (!expiry) return;
+    if (!expiry || !unlock) return;
     const tick = () => {
-      const diff = expiry.getTime() - Date.now();
+      const n = Date.now();
+      setNow(n);
+      const target = unlock.getTime() > n ? unlock.getTime() : expiry.getTime();
+      const diff = target - n;
       if (diff <= 0) { setCountdown(""); return; }
       const d = Math.floor(diff / 86400_000);
       const h = Math.floor((diff / 3600_000) % 24);
@@ -140,7 +146,8 @@ function WishView() {
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
-  }, [expiry]);
+  }, [expiry, unlock]);
+
 
   function startExperience() {
     setStarted(true);
