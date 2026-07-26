@@ -6,7 +6,7 @@ export const Route = createFileRoute("/")({
       { title: "Birthday Surprise — Make a memory" },
       { name: "description", content: "Create a birthday surprise page with photos, videos and an AI-written birthday letter. Share it with someone you love." },
       { property: "og:title", content: "Birthday Surprise — Make a memory" },
-      { property: "og:description", content: "Upload photos & videos, write an AI birthday letter, and share a link with the birthday boy or girl." },
+      { property: "og:description", content: "Create a birthday surprise page with photos, videos and an AI-written birthday letter. Share it with someone you love." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

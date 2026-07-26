@@ -78,14 +78,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Birthday Surprise — Make a memory" },
+      { name: "description", content: "Create a birthday surprise page with photos, videos and an AI-written birthday letter. Share it with someone you love." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Birthday Surprise — Make a memory" },
+      { property: "og:description", content: "Create a birthday surprise page with photos, videos and an AI-written birthday letter. Share it with someone you love." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Birthday Surprise — Make a memory" },
+      { name: "twitter:description", content: "Create a birthday surprise page with photos, videos and an AI-written birthday letter. Share it with someone you love." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a663722b-0c65-4436-bab3-f51b7b423ade/id-preview-fb6c01a7--37daea25-4143-4af9-9544-b0e4a347b747.lovable.app-1785062249007.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a663722b-0c65-4436-bab3-f51b7b423ade/id-preview-fb6c01a7--37daea25-4143-4af9-9544-b0e4a347b747.lovable.app-1785062249007.png" },
     ],
     links: [
       {
