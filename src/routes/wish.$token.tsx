@@ -112,13 +112,11 @@ function WishView() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase
-        .from("wishes")
-        .select("sender_name, recipient_name, letter, media_urls, birthday_date, birthday_time, view_duration_hours, created_at")
-        .eq("share_token", token)
-        .maybeSingle();
-      if (!data) setNotFound(true);
-      else setWish(data as unknown as Wish);
+      const { data } = await supabase.rpc("get_wish_by_token", { _token: token });
+      const row = Array.isArray(data) ? data[0] : data;
+      if (!row) setNotFound(true);
+      else setWish(row as unknown as Wish);
+
     })();
   }, [token]);
 
