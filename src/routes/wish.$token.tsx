@@ -198,6 +198,30 @@ function WishView() {
     );
   }
 
+  if (locked && unlock) {
+    return (
+      <main className="min-h-screen flex items-center justify-center p-6">
+        <div className="bday-card p-8 text-center space-y-3 max-w-md bday-pop">
+          <div className="text-6xl">🔒</div>
+          <h1 className="text-2xl bday-title">Not yet!</h1>
+          <p className="text-sm text-muted-foreground">
+            {wish.sender_name} made you a surprise. It comes alive at{" "}
+            <b>
+              {unlock.toLocaleString(undefined, {
+                month: "short",
+                day: "numeric",
+                hour: "numeric",
+                minute: "2-digit",
+              })}
+            </b>
+            .
+          </p>
+          {countdown && <p className="text-sm font-semibold">Opens in {countdown}</p>}
+        </div>
+      </main>
+    );
+  }
+
 
   if (!started) {
     return (
