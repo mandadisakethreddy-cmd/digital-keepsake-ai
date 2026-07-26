@@ -19,6 +19,8 @@ function NewWish() {
   const [sender, setSender] = useState("");
   const [recipient, setRecipient] = useState("");
   const [birthdayDate, setBirthdayDate] = useState("");
+  const [birthdayTime, setBirthdayTime] = useState("09:00");
+
   
   const [viewHours, setViewHours] = useState(24);
   const [feelings, setFeelings] = useState("");
@@ -116,7 +118,7 @@ function NewWish() {
           letter,
           media_urls: media,
           birthday_date: birthdayDate || null,
-          birthday_time: null,
+          birthday_time: birthdayDate ? birthdayTime || "00:00" : null,
           view_duration_hours: viewHours,
         })
         .select("share_token")
@@ -163,6 +165,16 @@ function NewWish() {
             />
           </div>
           <div>
+            <label className="text-xs font-medium block mb-1">🕐 Unlock time</label>
+            <input
+              type="time"
+              className="bday-input"
+              value={birthdayTime}
+              disabled={!birthdayDate}
+              onChange={(e) => setBirthdayTime(e.target.value)}
+            />
+          </div>
+          <div>
             <label className="text-xs font-medium block mb-1">⏰ Viewable for</label>
             <select
               className="bday-input"
@@ -179,7 +191,9 @@ function NewWish() {
           </div>
         </div>
         <p className="text-xs text-muted-foreground">
-          🎁 The recipient can open the surprise any time — the link stays live for the viewing window you pick (starting from now).
+          🎁 {birthdayDate
+            ? `The surprise stays locked until ${birthdayDate} at ${birthdayTime || "00:00"}, then stays open for the viewing window you pick.`
+            : "No date set — the recipient can open it right away, and the viewing window starts now."}
         </p>
       </section>
 

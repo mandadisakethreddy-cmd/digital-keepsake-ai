@@ -56,8 +56,14 @@ function playHappyBirthday(ctx: AudioContext) {
   return t - now;
 }
 
+function unlockDate(wish: Wish): Date {
+  if (!wish.birthday_date) return new Date(wish.created_at);
+  const time = wish.birthday_time ?? "00:00:00";
+  return new Date(`${wish.birthday_date}T${time.slice(0, 8).padEnd(8, ":00")}`);
+}
+
 function computeExpiry(wish: Wish): Date {
-  const start = new Date(wish.created_at).getTime();
+  const start = unlockDate(wish).getTime();
   return new Date(start + wish.view_duration_hours * 3600_000);
 }
 
@@ -116,14 +122,20 @@ function WishView() {
     })();
   }, [token]);
 
+  const unlock = useMemo(() => (wish ? unlockDate(wish) : null), [wish]);
   const expiry = useMemo(() => (wish ? computeExpiry(wish) : null), [wish]);
-  const expired = expiry ? expiry.getTime() < Date.now() : false;
+  const [now, setNow] = useState(() => Date.now());
+  const expired = expiry ? expiry.getTime() < now : false;
+  const locked = unlock ? unlock.getTime() > now : false;
 
-  // Countdown to expiry
+  // Countdown to unlock (while locked) or expiry
   useEffect(() => {
-    if (!expiry) return;
+    if (!expiry || !unlock) return;
     const tick = () => {
-      const diff = expiry.getTime() - Date.now();
+      const n = Date.now();
+      setNow(n);
+      const target = unlock.getTime() > n ? unlock.getTime() : expiry.getTime();
+      const diff = target - n;
       if (diff <= 0) { setCountdown(""); return; }
       const d = Math.floor(diff / 86400_000);
       const h = Math.floor((diff / 3600_000) % 24);
@@ -134,7 +146,8 @@ function WishView() {
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
-  }, [expiry]);
+  }, [expiry, unlock]);
+
 
   function startExperience() {
     setStarted(true);
@@ -180,6 +193,30 @@ function WishView() {
           <p className="text-sm text-muted-foreground">
             The viewing window for this birthday surprise has closed. Ask {wish.sender_name} to send it again!
           </p>
+        </div>
+      </main>
+    );
+  }
+
+  if (locked && unlock) {
+    return (
+      <main className="min-h-screen flex items-center justify-center p-6">
+        <div className="bday-card p-8 text-center space-y-3 max-w-md bday-pop">
+          <div className="text-6xl">🔒</div>
+          <h1 className="text-2xl bday-title">Not yet!</h1>
+          <p className="text-sm text-muted-foreground">
+            {wish.sender_name} made you a surprise. It comes alive at{" "}
+            <b>
+              {unlock.toLocaleString(undefined, {
+                month: "short",
+                day: "numeric",
+                hour: "numeric",
+                minute: "2-digit",
+              })}
+            </b>
+            .
+          </p>
+          {countdown && <p className="text-sm font-semibold">Opens in {countdown}</p>}
         </div>
       </main>
     );
