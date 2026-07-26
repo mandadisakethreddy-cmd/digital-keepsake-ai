@@ -114,11 +114,13 @@ function WishView() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase.rpc("get_wish_by_token", { _token: token });
-      const row = Array.isArray(data) ? data[0] : data;
-      if (!row) setNotFound(true);
-      else setWish(row as unknown as Wish);
-
+      try {
+        const { wish: row } = await getWishByToken({ data: { token } });
+        if (!row) setNotFound(true);
+        else setWish(row as unknown as Wish);
+      } catch {
+        setNotFound(true);
+      }
     })();
   }, [token]);
 
