@@ -61,7 +61,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_wish_by_token: {
+        Args: { _token: string }
+        Returns: {
+          birthday_date: string
+          birthday_time: string
+          created_at: string
+          id: string
+          letter: string
+          media_urls: Json
+          recipient_name: string
+          sender_name: string
+          view_duration_hours: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
