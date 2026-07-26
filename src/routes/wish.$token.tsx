@@ -63,7 +63,9 @@ function unlockDate(wish: Wish): Date {
 }
 
 function computeExpiry(wish: Wish): Date {
-  const start = unlockDate(wish).getTime();
+  // The viewing window starts when the surprise actually becomes openable:
+  // the unlock moment, or creation time if the unlock moment already passed.
+  const start = Math.max(unlockDate(wish).getTime(), new Date(wish.created_at).getTime());
   return new Date(start + wish.view_duration_hours * 3600_000);
 }
 
