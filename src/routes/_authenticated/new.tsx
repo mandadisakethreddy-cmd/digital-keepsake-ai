@@ -67,12 +67,19 @@ function NewWish() {
     if (!item?.path || item.type !== "image") return;
     setMedia((arr) => arr.map((m, i) => (i === index ? { ...m, enhancing: true } : m)));
     try {
+      const { data: s } = await supabase.auth.getSession();
+      const accessToken = s.session?.access_token;
+      if (!accessToken) throw new Error("Please sign in again");
       const res = await fetch("/api/enhance-image", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
         body: JSON.stringify({ path: item.path }),
       });
       if (!res.ok) throw new Error(await res.text());
+
       const { url, path } = (await res.json()) as { url: string; path: string };
       setMedia((arr) =>
         arr.map((m, i) => (i === index ? { ...m, url, path, enhancing: false } : m)),
