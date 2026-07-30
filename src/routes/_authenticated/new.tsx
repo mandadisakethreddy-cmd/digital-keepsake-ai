@@ -316,11 +316,13 @@ function NewWish() {
       </section>
 
       <section className="bday-card p-5 space-y-2">
-        <label className="text-sm font-medium">💌 Birthday letter</label>
+        <h2 className="text-sm font-semibold">💌 Birthday letter</h2>
         <textarea
           rows={10}
           className="bday-input"
+          aria-label="Birthday letter"
           placeholder="Your birthday letter will appear here — you can also write your own."
+
           value={letter}
           onChange={(e) => setLetter(e.target.value)}
         />
