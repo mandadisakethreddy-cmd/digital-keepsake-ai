@@ -221,14 +221,16 @@ function NewWish() {
       </section>
 
       <section className="bday-card p-5 space-y-2">
-        <label className="text-sm font-medium">📸 Upload photos & videos</label>
+        <h2 className="text-sm font-semibold" id="upload-heading">📸 Upload photos & videos</h2>
         <input
           type="file"
+          aria-labelledby="upload-heading"
           accept="image/*,video/*"
           multiple
           onChange={(e) => handleUpload(e.target.files)}
           className="block text-sm"
         />
+
         {media.length > 0 && (
           <>
             <p className="text-xs text-muted-foreground">Tap ✨ to colorize a photo with AI (adds a magical, vibrant birthday vibe).</p>
