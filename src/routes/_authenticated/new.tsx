@@ -171,7 +171,9 @@ function NewWish() {
 
         <input
           className="bday-input"
+          aria-label="Birthday boy or girl name"
           placeholder="Birthday boy / girl name"
+
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
         />
