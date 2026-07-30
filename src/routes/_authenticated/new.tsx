@@ -6,7 +6,18 @@ import { useServerFn } from "@tanstack/react-start";
 import { generateLetter } from "@/lib/ai.functions";
 
 export const Route = createFileRoute("/_authenticated/new")({
-  head: () => ({ meta: [{ title: "Create a Birthday Wish" }] }),
+  head: () => ({
+    meta: [
+      { title: "Create a Birthday Wish — Birthday Surprise" },
+      { name: "description", content: "Upload photos and videos, colorize them with AI, generate a birthday letter and pick the exact moment your surprise unlocks." },
+      { property: "og:title", content: "Create a Birthday Wish — Birthday Surprise" },
+      { property: "og:description", content: "Build a birthday surprise with photos, videos and an AI-written letter." },
+      { property: "og:url", content: "https://digital-keepsake-ai.lovable.app/new" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "https://digital-keepsake-ai.lovable.app/new" }],
+  }),
+
   component: NewWish,
 });
 
