@@ -1,0 +1,11 @@
+# Birthday Surprise
+
+> Create a shareable birthday surprise page with photos, videos, an AI-written birthday letter, music and a timed unlock window.
+
+Birthday Surprise lets you upload photos and videos of the birthday boy or girl, colorize them with AI, generate a heartfelt birthday letter, and share it as a private link that unlocks at the exact date and time you choose.
+
+## Pages
+
+- [Home](/): What Birthday Surprise is and how to start.
+- [Login or sign up](/auth): Create an account to build a surprise.
+- [How to plan a surprise party](/blog/how-to-plan-a-surprise-party): A step-by-step guide to planning a surprise party and adding a digital surprise page.
