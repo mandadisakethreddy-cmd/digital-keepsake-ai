@@ -37,7 +37,14 @@ function Landing() {
             Login
           </Link>
         </div>
+        <p className="text-xs text-muted-foreground pt-2">
+          New to this?{" "}
+          <Link to="/blog/how-to-plan-a-surprise-party" className="underline">
+            Read our guide to planning a surprise party
+          </Link>
+        </p>
       </div>
+
     </main>
   );
 }
