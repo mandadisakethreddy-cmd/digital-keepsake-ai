@@ -3,5 +3,6 @@ Allow: /
 Disallow: /dashboard
 Disallow: /new
 Disallow: /chat
+Disallow: /wish/
 
 Sitemap: https://digital-keepsake-ai.lovable.app/sitemap.xml
