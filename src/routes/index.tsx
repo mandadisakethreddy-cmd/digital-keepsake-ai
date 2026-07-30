@@ -3,14 +3,19 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Birthday Surprise — Make a memory" },
-      { name: "description", content: "Create a birthday surprise page with photos, videos and an AI-written birthday letter. Share it with someone you love." },
-      { property: "og:title", content: "Birthday Surprise — Make a memory" },
-      { property: "og:description", content: "Create a birthday surprise page with photos, videos and an AI-written birthday letter. Share it with someone you love." },
+      { title: "Birthday Surprise — Photos, Videos & an AI Birthday Letter" },
+      { name: "description", content: "Turn photos and videos into a shareable birthday surprise page with an AI-written letter, music and a timed unlock. Free to create in minutes." },
+      { property: "og:title", content: "Birthday Surprise — Photos, Videos & an AI Birthday Letter" },
+      { property: "og:description", content: "Upload their photos and videos, generate a heartfelt letter with AI, and share a surprise link that unlocks on their birthday." },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://digital-keepsake-ai.lovable.app/" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a663722b-0c65-4436-bab3-f51b7b423ade/id-preview-fb6c01a7--37daea25-4143-4af9-9544-b0e4a347b747.lovable.app-1785062249007.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a663722b-0c65-4436-bab3-f51b7b423ade/id-preview-fb6c01a7--37daea25-4143-4af9-9544-b0e4a347b747.lovable.app-1785062249007.png" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://digital-keepsake-ai.lovable.app/" }],
   }),
+
   component: Landing,
 });
 
@@ -32,7 +37,14 @@ function Landing() {
             Login
           </Link>
         </div>
+        <p className="text-xs text-muted-foreground pt-2">
+          New to this?{" "}
+          <Link to="/blog/how-to-plan-a-surprise-party" className="underline">
+            Read our guide to planning a surprise party
+          </Link>
+        </p>
       </div>
+
     </main>
   );
 }

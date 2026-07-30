@@ -9,15 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WishTokenRouteImport } from './routes/wish.$token'
+import { Route as BlogHowToPlanASurprisePartyRouteImport } from './routes/blog/how-to-plan-a-surprise-party'
 import { Route as ApiEnhanceImageRouteImport } from './routes/api/enhance-image'
 import { Route as AuthenticatedNewRouteImport } from './routes/_authenticated/new'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -37,6 +44,12 @@ const WishTokenRoute = WishTokenRouteImport.update({
   path: '/wish/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogHowToPlanASurprisePartyRoute =
+  BlogHowToPlanASurprisePartyRouteImport.update({
+    id: '/blog/how-to-plan-a-surprise-party',
+    path: '/blog/how-to-plan-a-surprise-party',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiEnhanceImageRoute = ApiEnhanceImageRouteImport.update({
   id: '/api/enhance-image',
   path: '/api/enhance-image',
@@ -61,19 +74,23 @@ const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/chat': typeof AuthenticatedChatRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/new': typeof AuthenticatedNewRoute
   '/api/enhance-image': typeof ApiEnhanceImageRoute
+  '/blog/how-to-plan-a-surprise-party': typeof BlogHowToPlanASurprisePartyRoute
   '/wish/$token': typeof WishTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/chat': typeof AuthenticatedChatRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/new': typeof AuthenticatedNewRoute
   '/api/enhance-image': typeof ApiEnhanceImageRoute
+  '/blog/how-to-plan-a-surprise-party': typeof BlogHowToPlanASurprisePartyRoute
   '/wish/$token': typeof WishTokenRoute
 }
 export interface FileRoutesById {
@@ -81,10 +98,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/chat': typeof AuthenticatedChatRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/new': typeof AuthenticatedNewRoute
   '/api/enhance-image': typeof ApiEnhanceImageRoute
+  '/blog/how-to-plan-a-surprise-party': typeof BlogHowToPlanASurprisePartyRoute
   '/wish/$token': typeof WishTokenRoute
 }
 export interface FileRouteTypes {
@@ -92,29 +111,35 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/sitemap.xml'
     | '/chat'
     | '/dashboard'
     | '/new'
     | '/api/enhance-image'
+    | '/blog/how-to-plan-a-surprise-party'
     | '/wish/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/sitemap.xml'
     | '/chat'
     | '/dashboard'
     | '/new'
     | '/api/enhance-image'
+    | '/blog/how-to-plan-a-surprise-party'
     | '/wish/$token'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/sitemap.xml'
     | '/_authenticated/chat'
     | '/_authenticated/dashboard'
     | '/_authenticated/new'
     | '/api/enhance-image'
+    | '/blog/how-to-plan-a-surprise-party'
     | '/wish/$token'
   fileRoutesById: FileRoutesById
 }
@@ -122,12 +147,21 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiEnhanceImageRoute: typeof ApiEnhanceImageRoute
+  BlogHowToPlanASurprisePartyRoute: typeof BlogHowToPlanASurprisePartyRoute
   WishTokenRoute: typeof WishTokenRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -154,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/wish/$token'
       fullPath: '/wish/$token'
       preLoaderRoute: typeof WishTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/how-to-plan-a-surprise-party': {
+      id: '/blog/how-to-plan-a-surprise-party'
+      path: '/blog/how-to-plan-a-surprise-party'
+      fullPath: '/blog/how-to-plan-a-surprise-party'
+      preLoaderRoute: typeof BlogHowToPlanASurprisePartyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/enhance-image': {
@@ -206,7 +247,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiEnhanceImageRoute: ApiEnhanceImageRoute,
+  BlogHowToPlanASurprisePartyRoute: BlogHowToPlanASurprisePartyRoute,
   WishTokenRoute: WishTokenRoute,
 }
 export const routeTree = rootRouteImport

@@ -4,7 +4,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Your Birthday Wishes" }] }),
+  head: () => ({
+    meta: [
+      { title: "Your Birthday Wishes — Birthday Surprise" },
+      { name: "description", content: "Manage the birthday surprises you've created, copy their share links, and see which ones are still open for viewing." },
+      { property: "og:title", content: "Your Birthday Wishes — Birthday Surprise" },
+      { property: "og:description", content: "Manage your birthday surprises and share links." },
+      { property: "og:url", content: "https://digital-keepsake-ai.lovable.app/dashboard" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "https://digital-keepsake-ai.lovable.app/dashboard" }],
+  }),
+
   component: Dashboard,
 });
 

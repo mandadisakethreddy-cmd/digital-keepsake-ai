@@ -8,9 +8,14 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Login or Sign Up — Birthday Surprise" },
-      { name: "description", content: "Log in or create your account to build a birthday surprise." },
+      { name: "description", content: "Log in or create a free Birthday Surprise account to upload photos and videos and build a shareable birthday surprise page." },
+      { property: "og:title", content: "Login or Sign Up — Birthday Surprise" },
+      { property: "og:description", content: "Create a free account to start building a birthday surprise page." },
+      { property: "og:url", content: "https://digital-keepsake-ai.lovable.app/auth" },
     ],
+    links: [{ rel: "canonical", href: "https://digital-keepsake-ai.lovable.app/auth" }],
   }),
+
   component: AuthPage,
 });
 

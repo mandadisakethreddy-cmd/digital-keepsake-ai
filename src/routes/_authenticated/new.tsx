@@ -6,7 +6,18 @@ import { useServerFn } from "@tanstack/react-start";
 import { generateLetter } from "@/lib/ai.functions";
 
 export const Route = createFileRoute("/_authenticated/new")({
-  head: () => ({ meta: [{ title: "Create a Birthday Wish" }] }),
+  head: () => ({
+    meta: [
+      { title: "Create a Birthday Wish — Birthday Surprise" },
+      { name: "description", content: "Upload photos and videos, colorize them with AI, generate a birthday letter and pick the exact moment your surprise unlocks." },
+      { property: "og:title", content: "Create a Birthday Wish — Birthday Surprise" },
+      { property: "og:description", content: "Build a birthday surprise with photos, videos and an AI-written letter." },
+      { property: "og:url", content: "https://digital-keepsake-ai.lovable.app/new" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "https://digital-keepsake-ai.lovable.app/new" }],
+  }),
+
   component: NewWish,
 });
 
@@ -149,15 +160,20 @@ function NewWish() {
       </div>
 
       <section className="bday-card p-5 space-y-3">
+        <h2 className="text-sm font-semibold">🎈 Who is this surprise for?</h2>
         <input
           className="bday-input"
+          aria-label="Your name (sender)"
           placeholder="Your name (sender)"
           value={sender}
           onChange={(e) => setSender(e.target.value)}
         />
+
         <input
           className="bday-input"
+          aria-label="Birthday boy or girl name"
           placeholder="Birthday boy / girl name"
+
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
         />
@@ -205,14 +221,16 @@ function NewWish() {
       </section>
 
       <section className="bday-card p-5 space-y-2">
-        <label className="text-sm font-medium">📸 Upload photos & videos</label>
+        <h2 className="text-sm font-semibold" id="upload-heading">📸 Upload photos & videos</h2>
         <input
           type="file"
+          aria-labelledby="upload-heading"
           accept="image/*,video/*"
           multiple
           onChange={(e) => handleUpload(e.target.files)}
           className="block text-sm"
         />
+
         {media.length > 0 && (
           <>
             <p className="text-xs text-muted-foreground">Tap ✨ to colorize a photo with AI (adds a magical, vibrant birthday vibe).</p>
@@ -220,9 +238,17 @@ function NewWish() {
               {media.map((m, i) => (
                 <div key={i} className="relative border rounded-xl overflow-hidden aspect-square bg-muted">
                   {m.type === "image" ? (
-                    <img src={m.url} alt={m.name} className="w-full h-full object-cover" />
+                    <img
+                      src={m.url}
+                      alt={`Birthday photo ${i + 1} of ${media.length} for ${recipient || "the birthday person"}`}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
-                    <video src={m.url} className="w-full h-full object-cover" />
+                    <video
+                      src={m.url}
+                      aria-label={`Birthday video ${i + 1} of ${media.length}`}
+                      className="w-full h-full object-cover"
+                    />
                   )}
                   {m.enhancing && (
                     <div className="absolute inset-0 bg-black/50 text-white text-xs flex items-center justify-center">
@@ -231,18 +257,22 @@ function NewWish() {
                   )}
                   <button
                     onClick={() => setMedia((arr) => arr.filter((_, idx) => idx !== i))}
+                    aria-label={`Remove ${m.type === "image" ? "photo" : "video"} ${i + 1}`}
                     className="absolute top-1 right-1 bg-black/60 text-white text-xs w-5 h-5 rounded-full"
                   >
-                    ×
+                    <span aria-hidden="true">×</span>
                   </button>
+
                   {m.type === "image" && !m.enhancing && (
                     <button
                       onClick={() => handleEnhance(i)}
+                      aria-label={`Colorize photo ${i + 1} with AI`}
                       className="absolute bottom-1 left-1 right-1 bg-gradient-to-r from-pink-500 to-amber-400 text-white text-[10px] py-1 rounded-md font-semibold"
                     >
                       ✨ Colorize
                     </button>
                   )}
+
                 </div>
               ))}
             </div>
@@ -252,10 +282,11 @@ function NewWish() {
 
 
       <section className="bday-card p-5 space-y-2">
-        <label className="text-sm font-medium">💭 Share your feelings & memories (for the AI)</label>
+        <h2 className="text-sm font-semibold">💭 Share your feelings & memories (for the AI)</h2>
         <textarea
           rows={4}
           className="bday-input"
+          aria-label="Feelings and memories about the birthday person"
           placeholder="e.g. She's my best friend since college, always makes me laugh, loves hiking..."
           value={feelings}
           onChange={(e) => setFeelings(e.target.value)}
@@ -263,6 +294,7 @@ function NewWish() {
         <div className="flex gap-2 items-center flex-wrap">
           <select
             value={tone}
+            aria-label="Letter tone"
             onChange={(e) => setTone(e.target.value as typeof tone)}
             className="bday-input"
             style={{ width: "auto" }}
@@ -272,6 +304,7 @@ function NewWish() {
             <option value="romantic">Romantic</option>
             <option value="cute">Cute</option>
           </select>
+
           <button
             onClick={handleGenerate}
             disabled={busy}
@@ -283,11 +316,13 @@ function NewWish() {
       </section>
 
       <section className="bday-card p-5 space-y-2">
-        <label className="text-sm font-medium">💌 Birthday letter</label>
+        <h2 className="text-sm font-semibold">💌 Birthday letter</h2>
         <textarea
           rows={10}
           className="bday-input"
+          aria-label="Birthday letter"
           placeholder="Your birthday letter will appear here — you can also write your own."
+
           value={letter}
           onChange={(e) => setLetter(e.target.value)}
         />

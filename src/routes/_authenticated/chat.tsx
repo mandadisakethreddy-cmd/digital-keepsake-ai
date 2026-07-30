@@ -5,7 +5,18 @@ import { chatWithAI } from "@/lib/ai.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/chat")({
-  head: () => ({ meta: [{ title: "Talk to the AI" }] }),
+  head: () => ({
+    meta: [
+      { title: "Talk to the AI — Birthday Surprise" },
+      { name: "description", content: "Chat with a friendly AI companion to put your feelings into words before writing the birthday letter for someone you love." },
+      { property: "og:title", content: "Talk to the AI — Birthday Surprise" },
+      { property: "og:description", content: "Chat with an AI companion about the birthday person before writing their letter." },
+      { property: "og:url", content: "https://digital-keepsake-ai.lovable.app/chat" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "https://digital-keepsake-ai.lovable.app/chat" }],
+  }),
+
   component: ChatPage,
 });
 
