@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /new
+Disallow: /chat
+
+Sitemap: https://digital-keepsake-ai.lovable.app/sitemap.xml
