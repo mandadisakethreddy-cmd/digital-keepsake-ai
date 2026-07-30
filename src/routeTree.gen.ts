@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WishTokenRouteImport } from './routes/wish.$token'
+import { Route as BlogHowToPlanASurprisePartyRouteImport } from './routes/blog/how-to-plan-a-surprise-party'
 import { Route as ApiEnhanceImageRouteImport } from './routes/api/enhance-image'
 import { Route as AuthenticatedNewRouteImport } from './routes/_authenticated/new'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -43,6 +44,12 @@ const WishTokenRoute = WishTokenRouteImport.update({
   path: '/wish/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogHowToPlanASurprisePartyRoute =
+  BlogHowToPlanASurprisePartyRouteImport.update({
+    id: '/blog/how-to-plan-a-surprise-party',
+    path: '/blog/how-to-plan-a-surprise-party',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiEnhanceImageRoute = ApiEnhanceImageRouteImport.update({
   id: '/api/enhance-image',
   path: '/api/enhance-image',
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/new': typeof AuthenticatedNewRoute
   '/api/enhance-image': typeof ApiEnhanceImageRoute
+  '/blog/how-to-plan-a-surprise-party': typeof BlogHowToPlanASurprisePartyRoute
   '/wish/$token': typeof WishTokenRoute
 }
 export interface FileRoutesByTo {
@@ -82,6 +90,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/new': typeof AuthenticatedNewRoute
   '/api/enhance-image': typeof ApiEnhanceImageRoute
+  '/blog/how-to-plan-a-surprise-party': typeof BlogHowToPlanASurprisePartyRoute
   '/wish/$token': typeof WishTokenRoute
 }
 export interface FileRoutesById {
@@ -94,6 +103,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/new': typeof AuthenticatedNewRoute
   '/api/enhance-image': typeof ApiEnhanceImageRoute
+  '/blog/how-to-plan-a-surprise-party': typeof BlogHowToPlanASurprisePartyRoute
   '/wish/$token': typeof WishTokenRoute
 }
 export interface FileRouteTypes {
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/new'
     | '/api/enhance-image'
+    | '/blog/how-to-plan-a-surprise-party'
     | '/wish/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/new'
     | '/api/enhance-image'
+    | '/blog/how-to-plan-a-surprise-party'
     | '/wish/$token'
   id:
     | '__root__'
@@ -127,6 +139,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/new'
     | '/api/enhance-image'
+    | '/blog/how-to-plan-a-surprise-party'
     | '/wish/$token'
   fileRoutesById: FileRoutesById
 }
@@ -136,6 +149,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiEnhanceImageRoute: typeof ApiEnhanceImageRoute
+  BlogHowToPlanASurprisePartyRoute: typeof BlogHowToPlanASurprisePartyRoute
   WishTokenRoute: typeof WishTokenRoute
 }
 
@@ -174,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/wish/$token'
       fullPath: '/wish/$token'
       preLoaderRoute: typeof WishTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/how-to-plan-a-surprise-party': {
+      id: '/blog/how-to-plan-a-surprise-party'
+      path: '/blog/how-to-plan-a-surprise-party'
+      fullPath: '/blog/how-to-plan-a-surprise-party'
+      preLoaderRoute: typeof BlogHowToPlanASurprisePartyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/enhance-image': {
@@ -228,6 +249,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiEnhanceImageRoute: ApiEnhanceImageRoute,
+  BlogHowToPlanASurprisePartyRoute: BlogHowToPlanASurprisePartyRoute,
   WishTokenRoute: WishTokenRoute,
 }
 export const routeTree = rootRouteImport
