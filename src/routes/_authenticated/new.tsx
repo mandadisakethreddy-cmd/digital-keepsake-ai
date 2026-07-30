@@ -282,10 +282,11 @@ function NewWish() {
 
 
       <section className="bday-card p-5 space-y-2">
-        <label className="text-sm font-medium">💭 Share your feelings & memories (for the AI)</label>
+        <h2 className="text-sm font-semibold">💭 Share your feelings & memories (for the AI)</h2>
         <textarea
           rows={4}
           className="bday-input"
+          aria-label="Feelings and memories about the birthday person"
           placeholder="e.g. She's my best friend since college, always makes me laugh, loves hiking..."
           value={feelings}
           onChange={(e) => setFeelings(e.target.value)}
@@ -293,6 +294,7 @@ function NewWish() {
         <div className="flex gap-2 items-center flex-wrap">
           <select
             value={tone}
+            aria-label="Letter tone"
             onChange={(e) => setTone(e.target.value as typeof tone)}
             className="bday-input"
             style={{ width: "auto" }}
@@ -302,6 +304,7 @@ function NewWish() {
             <option value="romantic">Romantic</option>
             <option value="cute">Cute</option>
           </select>
+
           <button
             onClick={handleGenerate}
             disabled={busy}
