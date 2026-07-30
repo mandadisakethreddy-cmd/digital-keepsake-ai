@@ -1,17 +1,61 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createClient } from "@supabase/supabase-js";
+import { z } from "zod";
+
+const bodySchema = z.object({
+  // Storage paths are always "<uuid>/<filename>" — no traversal, no absolute paths.
+  path: z
+    .string()
+    .min(3)
+    .max(512)
+    .regex(/^[0-9a-fA-F-]{36}\/[^/\\]{1,255}$/, "Invalid path"),
+});
 
 export const Route = createFileRoute("/api/enhance-image")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         try {
-          const { path } = (await request.json()) as { path: string };
-          if (!path) return new Response("Missing path", { status: 400 });
+          const SUPABASE_URL = process.env.SUPABASE_URL;
+          const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
+          if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+            return new Response("Server misconfigured", { status: 500 });
+          }
+
+          // --- Require a valid signed-in Supabase session ---
+          const authHeader = request.headers.get("authorization") ?? "";
+          if (!authHeader.startsWith("Bearer ")) {
+            return new Response("Unauthorized", { status: 401 });
+          }
+          const token = authHeader.slice("Bearer ".length).trim();
+          if (token.split(".").length !== 3) {
+            return new Response("Unauthorized", { status: 401 });
+          }
+
+          const authClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+            global: { headers: { Authorization: `Bearer ${token}` } },
+            auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+          });
+          const { data: claimsData, error: claimsErr } = await authClient.auth.getClaims(token);
+          const userId = claimsData?.claims?.sub;
+          if (claimsErr || !userId) {
+            return new Response("Unauthorized", { status: 401 });
+          }
+
+          const parsed = bodySchema.safeParse(await request.json());
+          if (!parsed.success) return new Response("Invalid path", { status: 400 });
+          const { path } = parsed.data;
+
+          // --- Ownership check: path must live in the caller's own folder ---
+          if (path.split("/")[0] !== userId) {
+            return new Response("Forbidden", { status: 403 });
+          }
 
           const key = process.env.LOVABLE_API_KEY;
           if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
 
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
 
           // Download original
           const { data: blob, error: dlErr } = await supabaseAdmin.storage
