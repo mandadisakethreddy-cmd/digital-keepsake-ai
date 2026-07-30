@@ -3,14 +3,19 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { getWishByToken } from "@/lib/wish.functions";
 
 export const Route = createFileRoute("/wish/$token")({
-  head: () => ({
+  head: ({ params }) => ({
     meta: [
       { title: "A Birthday Surprise for You 🎂" },
-      { name: "description", content: "Someone made you a birthday surprise with photos, videos and a personal letter." },
+      { name: "description", content: "Someone made you a birthday surprise with photos, videos and a personal letter — open it to see your memories." },
       { property: "og:title", content: "A Birthday Surprise for You 🎂" },
-      { property: "og:description", content: "Open your birthday surprise." },
+      { property: "og:description", content: "Open your birthday surprise: photos, videos and a personal letter." },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: `https://digital-keepsake-ai.lovable.app/wish/${params.token}` },
+      { name: "robots", content: "noindex" },
     ],
+    links: [{ rel: "canonical", href: `https://digital-keepsake-ai.lovable.app/wish/${params.token}` }],
   }),
+
   component: WishView,
 });
 
