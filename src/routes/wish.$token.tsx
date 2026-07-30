@@ -176,15 +176,21 @@ function WishView() {
   if (notFound) {
     return (
       <main className="min-h-screen flex items-center justify-center p-6">
-        <div className="bday-card p-8 text-center">
+        <div className="bday-card p-8 text-center space-y-2">
+          <h1 className="text-2xl bday-title">Surprise not found</h1>
           <p>This surprise link is invalid or has been removed.</p>
         </div>
       </main>
     );
   }
   if (!wish) {
-    return <main className="min-h-screen flex items-center justify-center p-6">Loading your surprise…</main>;
+    return (
+      <main className="min-h-screen flex items-center justify-center p-6">
+        <h1 className="text-xl bday-title">Loading your surprise…</h1>
+      </main>
+    );
   }
+
 
   if (expired) {
     return (
