@@ -266,11 +266,13 @@ function NewWish() {
                   {m.type === "image" && !m.enhancing && (
                     <button
                       onClick={() => handleEnhance(i)}
+                      aria-label={`Colorize photo ${i + 1} with AI`}
                       className="absolute bottom-1 left-1 right-1 bg-gradient-to-r from-pink-500 to-amber-400 text-white text-[10px] py-1 rounded-md font-semibold"
                     >
                       ✨ Colorize
                     </button>
                   )}
+
                 </div>
               ))}
             </div>
