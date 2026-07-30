@@ -160,12 +160,15 @@ function NewWish() {
       </div>
 
       <section className="bday-card p-5 space-y-3">
+        <h2 className="text-sm font-semibold">🎈 Who is this surprise for?</h2>
         <input
           className="bday-input"
+          aria-label="Your name (sender)"
           placeholder="Your name (sender)"
           value={sender}
           onChange={(e) => setSender(e.target.value)}
         />
+
         <input
           className="bday-input"
           placeholder="Birthday boy / girl name"
