@@ -43,6 +43,11 @@ function Landing() {
             Read our guide to planning a surprise party
           </Link>
         </p>
+        <p className="text-xs text-muted-foreground">
+          <Link to="/connect" className="underline">
+            Connect ChatGPT or Claude to your account
+          </Link>
+        </p>
       </div>
 
     </main>
