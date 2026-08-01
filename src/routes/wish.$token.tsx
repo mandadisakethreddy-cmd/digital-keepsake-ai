@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getWishByToken } from "@/lib/wish.functions";
+import { formatInTz } from "@/lib/tz";
 
 export const Route = createFileRoute("/wish/$token")({
   head: ({ params }) => ({
@@ -25,10 +26,14 @@ type Wish = {
   recipient_name: string;
   letter: string;
   media_urls: Media[];
-  birthday_date: string | null;
-  birthday_time: string | null;
   view_duration_hours: number;
   created_at: string;
+  unlock_time_utc: string;
+  timezone: string;
+  event_status: string;
+  is_unlocked: boolean;
+  unlock_version: number;
+  server_now: string;
 };
 
 // Happy Birthday melody (frequencies in Hz + beats)
@@ -61,16 +66,12 @@ function playHappyBirthday(ctx: AudioContext) {
   return t - now;
 }
 
-function unlockDate(wish: Wish): Date {
-  if (!wish.birthday_date) return new Date(wish.created_at);
-  const time = wish.birthday_time ?? "00:00:00";
-  return new Date(`${wish.birthday_date}T${time.slice(0, 8).padEnd(8, ":00")}`);
-}
-
 function computeExpiry(wish: Wish): Date {
-  // The viewing window starts when the surprise actually becomes openable:
-  // the unlock moment, or creation time if the unlock moment already passed.
-  const start = Math.max(unlockDate(wish).getTime(), new Date(wish.created_at).getTime());
+  // The viewing window starts when the surprise actually becomes openable.
+  const start = Math.max(
+    new Date(wish.unlock_time_utc).getTime(),
+    new Date(wish.created_at).getTime(),
+  );
   return new Date(start + wish.view_duration_hours * 3600_000);
 }
 
@@ -107,33 +108,51 @@ function MediaSlideshow({ media }: { media: Media[] }) {
 }
 
 function WishView() {
-
-
   const { token } = Route.useParams();
   const [wish, setWish] = useState<Wish | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [started, setStarted] = useState(false);
   const [countdown, setCountdown] = useState("");
+  // Difference between the server's UTC clock and this device's clock.
+  const [clockSkew, setClockSkew] = useState(0);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const musicTimerRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const { wish: row } = await getWishByToken({ data: { token } });
-        if (!row) setNotFound(true);
-        else setWish(row as unknown as Wish);
-      } catch {
+  async function load() {
+    try {
+      const { wish: row } = await getWishByToken({ data: { token } });
+      if (!row) {
         setNotFound(true);
+        return;
       }
-    })();
+      const next = row as unknown as Wish;
+      setClockSkew(new Date(next.server_now).getTime() - Date.now());
+      setWish(next);
+    } catch {
+      setNotFound(true);
+    }
+  }
+
+  useEffect(() => {
+    void load();
+     
   }, [token]);
 
-  const unlock = useMemo(() => (wish ? unlockDate(wish) : null), [wish]);
+  // Keep the schedule in sync: if the creator reschedules, the countdown on
+  // every open device updates on its own — no refresh needed.
+  useEffect(() => {
+    if (!wish || wish.is_unlocked) return;
+    const id = window.setInterval(() => void load(), 10_000);
+    return () => window.clearInterval(id);
+     
+  }, [wish?.is_unlocked, wish?.unlock_version, token]);
+
+  const unlock = useMemo(() => (wish ? new Date(wish.unlock_time_utc) : null), [wish]);
   const expiry = useMemo(() => (wish ? computeExpiry(wish) : null), [wish]);
   const [now, setNow] = useState(() => Date.now());
-  const expired = expiry ? expiry.getTime() < now : false;
-  const locked = unlock ? unlock.getTime() > now : false;
+  const serverNow = now + clockSkew;
+  const expired = expiry ? expiry.getTime() < serverNow : false;
+  const locked = wish ? !wish.is_unlocked : false;
 
   // Countdown to unlock (while locked) or expiry
   useEffect(() => {
@@ -141,9 +160,14 @@ function WishView() {
     const tick = () => {
       const n = Date.now();
       setNow(n);
-      const target = unlock.getTime() > n ? unlock.getTime() : expiry.getTime();
-      const diff = target - n;
-      if (diff <= 0) { setCountdown(""); return; }
+      const sn = n + clockSkew;
+      const target = unlock.getTime() > sn ? unlock.getTime() : expiry.getTime();
+      const diff = target - sn;
+      if (diff <= 0) {
+        setCountdown("");
+        if (unlock.getTime() <= sn && wish && !wish.is_unlocked) void load();
+        return;
+      }
       const d = Math.floor(diff / 86400_000);
       const h = Math.floor((diff / 3600_000) % 24);
       const m = Math.floor((diff / 60_000) % 60);
@@ -153,8 +177,8 @@ function WishView() {
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
-  }, [expiry, unlock]);
-
+     
+  }, [expiry, unlock, clockSkew]);
 
   function startExperience() {
     setStarted(true);
@@ -196,6 +220,30 @@ function WishView() {
     );
   }
 
+  if (locked && unlock) {
+    return (
+      <main className="min-h-screen flex items-center justify-center p-6">
+        <div className="bday-card p-8 text-center space-y-3 max-w-md bday-pop">
+          <div className="text-6xl">🔒</div>
+          <h1 className="text-2xl bday-title">Not yet!</h1>
+          <p className="text-sm text-muted-foreground">
+            {wish.sender_name} made you a surprise. It comes alive at{" "}
+            <b>{formatInTz(unlock, wish.timezone || "UTC")}</b>.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Your local time:{" "}
+            {unlock.toLocaleString(undefined, {
+              month: "short",
+              day: "numeric",
+              hour: "numeric",
+              minute: "2-digit",
+            })}
+          </p>
+          {countdown && <p className="text-sm font-semibold">Opens in {countdown}</p>}
+        </div>
+      </main>
+    );
+  }
 
   if (expired) {
     return (
@@ -210,31 +258,6 @@ function WishView() {
       </main>
     );
   }
-
-  if (locked && unlock) {
-    return (
-      <main className="min-h-screen flex items-center justify-center p-6">
-        <div className="bday-card p-8 text-center space-y-3 max-w-md bday-pop">
-          <div className="text-6xl">🔒</div>
-          <h1 className="text-2xl bday-title">Not yet!</h1>
-          <p className="text-sm text-muted-foreground">
-            {wish.sender_name} made you a surprise. It comes alive at{" "}
-            <b>
-              {unlock.toLocaleString(undefined, {
-                month: "short",
-                day: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-              })}
-            </b>
-            .
-          </p>
-          {countdown && <p className="text-sm font-semibold">Opens in {countdown}</p>}
-        </div>
-      </main>
-    );
-  }
-
 
   if (!started) {
     return (
@@ -258,21 +281,17 @@ function WishView() {
 
   return (
     <main className="min-h-screen max-w-2xl mx-auto p-6 space-y-8 relative">
-      {(
-        <>
-          {["🎈","🎉","🎂","🎁","✨","🎊"].map((e, i) => (
-            <span
-              key={i}
-              className="confetti"
-              style={{
-                left: `${(i * 17) % 100}%`,
-                animationDuration: `${6 + (i % 4)}s`,
-                animationDelay: `${i * 0.7}s`,
-              }}
-            >{e}</span>
-          ))}
-        </>
-      )}
+      {["🎈","🎉","🎂","🎁","✨","🎊"].map((e, i) => (
+        <span
+          key={i}
+          className="confetti"
+          style={{
+            left: `${(i * 17) % 100}%`,
+            animationDuration: `${6 + (i % 4)}s`,
+            animationDelay: `${i * 0.7}s`,
+          }}
+        >{e}</span>
+      ))}
 
       <header className="text-center space-y-2 bday-pop">
         <div className="text-6xl">🎂</div>
@@ -294,7 +313,6 @@ function WishView() {
           {wish.letter}
         </div>
       </section>
-
 
       <footer className="text-center text-xs text-muted-foreground pb-6">
         Made with ❤️ by {wish.sender_name}
