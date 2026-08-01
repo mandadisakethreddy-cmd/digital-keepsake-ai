@@ -24,12 +24,12 @@ export const Route = createFileRoute("/_authenticated/chat")({
 type Msg = { role: "user" | "assistant"; content: string };
 
 function ChatPage() {
-  const call = useServerFn(chatWithAI);
+  const call = useServerFn(scheduleAssistant);
   const [messages, setMessages] = useState<Msg[]>([
     {
       role: "assistant",
       content:
-        "Hi 🌱 I'm here to help you put your feelings into words. Whose birthday is it, and what's one thing you love about them?",
+        "Hi 🌱 I can help two ways: talk through your feelings for the birthday letter, or manage your unlock schedule — try \"delay my surprise by two days\" or \"show my current unlock schedule\".",
     },
   ]);
   const [input, setInput] = useState("");
