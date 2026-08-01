@@ -14,44 +14,115 @@ export type Database = {
   }
   public: {
     Tables: {
+      wish_audit_logs: {
+        Row: {
+          browser: string | null
+          created_at: string
+          device: string | null
+          edited_by: string
+          event_id: string
+          id: string
+          ip_address: string | null
+          new_unlock_time: string
+          old_unlock_time: string | null
+          reason: string | null
+          timezone: string
+        }
+        Insert: {
+          browser?: string | null
+          created_at?: string
+          device?: string | null
+          edited_by: string
+          event_id: string
+          id?: string
+          ip_address?: string | null
+          new_unlock_time: string
+          old_unlock_time?: string | null
+          reason?: string | null
+          timezone: string
+        }
+        Update: {
+          browser?: string | null
+          created_at?: string
+          device?: string | null
+          edited_by?: string
+          event_id?: string
+          id?: string
+          ip_address?: string | null
+          new_unlock_time?: string
+          old_unlock_time?: string | null
+          reason?: string | null
+          timezone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wish_audit_logs_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "wishes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wishes: {
         Row: {
           birthday_date: string | null
           birthday_time: string | null
           created_at: string
+          event_status: string
           id: string
+          is_unlocked: boolean
+          last_edited_at: string | null
+          last_edited_by: string | null
           letter: string
           media_urls: Json
           owner_id: string
           recipient_name: string
           sender_name: string
           share_token: string
+          timezone: string
+          unlock_time_utc: string
+          unlock_version: number
           view_duration_hours: number
         }
         Insert: {
           birthday_date?: string | null
           birthday_time?: string | null
           created_at?: string
+          event_status?: string
           id?: string
+          is_unlocked?: boolean
+          last_edited_at?: string | null
+          last_edited_by?: string | null
           letter?: string
           media_urls?: Json
           owner_id: string
           recipient_name: string
           sender_name: string
           share_token?: string
+          timezone?: string
+          unlock_time_utc?: string
+          unlock_version?: number
           view_duration_hours?: number
         }
         Update: {
           birthday_date?: string | null
           birthday_time?: string | null
           created_at?: string
+          event_status?: string
           id?: string
+          is_unlocked?: boolean
+          last_edited_at?: string | null
+          last_edited_by?: string | null
           letter?: string
           media_urls?: Json
           owner_id?: string
           recipient_name?: string
           sender_name?: string
           share_token?: string
+          timezone?: string
+          unlock_time_utc?: string
+          unlock_version?: number
           view_duration_hours?: number
         }
         Relationships: []
@@ -67,11 +138,17 @@ export type Database = {
           birthday_date: string
           birthday_time: string
           created_at: string
+          event_status: string
           id: string
+          is_unlocked: boolean
           letter: string
           media_urls: Json
           recipient_name: string
           sender_name: string
+          server_now: string
+          timezone: string
+          unlock_time_utc: string
+          unlock_version: number
           view_duration_hours: number
         }[]
       }

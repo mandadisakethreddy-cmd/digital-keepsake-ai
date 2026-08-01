@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { chatWithAI } from "@/lib/ai.functions";
+import { scheduleAssistant } from "@/lib/schedule-ai.functions";
+import { browserTimeZone } from "@/lib/tz";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/chat")({
@@ -23,12 +24,12 @@ export const Route = createFileRoute("/_authenticated/chat")({
 type Msg = { role: "user" | "assistant"; content: string };
 
 function ChatPage() {
-  const call = useServerFn(chatWithAI);
+  const call = useServerFn(scheduleAssistant);
   const [messages, setMessages] = useState<Msg[]>([
     {
       role: "assistant",
       content:
-        "Hi 🌱 I'm here to help you put your feelings into words. Whose birthday is it, and what's one thing you love about them?",
+        "Hi 🌱 I can help two ways: talk through your feelings for the birthday letter, or manage your unlock schedule — try \"delay my surprise by two days\" or \"show my current unlock schedule\".",
     },
   ]);
   const [input, setInput] = useState("");
@@ -52,7 +53,9 @@ function ChatPage() {
     setInput("");
     setBusy(true);
     try {
-      const res = await call({ data: { messages: next.slice(-20) } });
+      const res = await call({
+        data: { messages: next.slice(-20), timezone: browserTimeZone() },
+      });
       setMessages((m) => [...m, { role: "assistant", content: res.reply }]);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "AI error");

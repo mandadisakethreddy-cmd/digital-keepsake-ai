@@ -25,6 +25,7 @@ import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } fr
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
+import { Route as ApiEventsIdUnlockTimeRouteImport } from './routes/api/events/$id/unlock-time'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -109,6 +110,11 @@ const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiEventsIdUnlockTimeRoute = ApiEventsIdUnlockTimeRouteImport.update({
+  id: '/api/events/$id/unlock-time',
+  path: '/api/events/$id/unlock-time',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -126,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/wish/$token': typeof WishTokenRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/events/$id/unlock-time': typeof ApiEventsIdUnlockTimeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/wish/$token': typeof WishTokenRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/events/$id/unlock-time': typeof ApiEventsIdUnlockTimeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -162,6 +170,7 @@ export interface FileRoutesById {
   '/wish/$token': typeof WishTokenRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/events/$id/unlock-time': typeof ApiEventsIdUnlockTimeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/wish/$token'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/events/$id/unlock-time'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/wish/$token'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/events/$id/unlock-time'
   id:
     | '__root__'
     | '/'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/wish/$token'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/events/$id/unlock-time'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -232,6 +244,7 @@ export interface RootRouteChildren {
   WishTokenRoute: typeof WishTokenRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiEventsIdUnlockTimeRoute: typeof ApiEventsIdUnlockTimeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -348,6 +361,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/events/$id/unlock-time': {
+      id: '/api/events/$id/unlock-time'
+      path: '/api/events/$id/unlock-time'
+      fullPath: '/api/events/$id/unlock-time'
+      preLoaderRoute: typeof ApiEventsIdUnlockTimeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -381,6 +401,7 @@ const rootRouteChildren: RootRouteChildren = {
   WishTokenRoute: WishTokenRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiEventsIdUnlockTimeRoute: ApiEventsIdUnlockTimeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
