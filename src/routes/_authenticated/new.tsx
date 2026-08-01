@@ -130,6 +130,9 @@ function NewWish() {
     setBusy(true);
     try {
       const { data: u } = await supabase.auth.getUser();
+      const unlockUtc = birthdayDate
+        ? zonedToUtc(birthdayDate, birthdayTime || "00:00", timezone)
+        : new Date();
       const { data, error } = await supabase
         .from("wishes")
         .insert({
@@ -139,8 +142,12 @@ function NewWish() {
           letter,
           media_urls: media,
           birthday_date: birthdayDate || null,
-          birthday_time: birthdayDate ? birthdayTime || "00:00" : null,
+          birthday_time: birthdayDate ? `${birthdayTime || "00:00"}:00` : null,
           view_duration_hours: viewHours,
+          timezone,
+          unlock_time_utc: unlockUtc.toISOString(),
+          event_status: unlockUtc.getTime() > Date.now() ? "scheduled" : "unlocked",
+          is_unlocked: unlockUtc.getTime() <= Date.now(),
         })
         .select("share_token")
         .single();
