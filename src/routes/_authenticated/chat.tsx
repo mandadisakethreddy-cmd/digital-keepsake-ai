@@ -53,7 +53,9 @@ function ChatPage() {
     setInput("");
     setBusy(true);
     try {
-      const res = await call({ data: { messages: next.slice(-20) } });
+      const res = await call({
+        data: { messages: next.slice(-20), timezone: browserTimeZone() },
+      });
       setMessages((m) => [...m, { role: "assistant", content: res.reply }]);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "AI error");
