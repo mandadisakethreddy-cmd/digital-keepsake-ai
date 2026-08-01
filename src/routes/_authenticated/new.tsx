@@ -222,10 +222,23 @@ function NewWish() {
               <option value={168}>1 week</option>
             </select>
           </div>
+          <div>
+            <label className="text-xs font-medium block mb-1">🌍 Time zone</label>
+            <select
+              className="bday-input"
+              value={timezone}
+              onChange={(e) => setTimezone(e.target.value)}
+            >
+              {!zones.includes(timezone) && <option value={timezone}>{timezone}</option>}
+              {zones.map((z) => (
+                <option key={z} value={z}>{z}</option>
+              ))}
+            </select>
+          </div>
         </div>
         <p className="text-xs text-muted-foreground">
           🎁 {birthdayDate
-            ? `The surprise stays locked until ${birthdayDate} at ${birthdayTime || "00:00"}, then stays open for the viewing window you pick.`
+            ? `The surprise stays locked until ${birthdayDate} at ${birthdayTime || "00:00"} (${timezone}), then stays open for the viewing window you pick. Stored in UTC so it unlocks at the right moment anywhere in the world.`
             : "No date set — the recipient can open it right away, and the viewing window starts now."}
         </p>
       </section>
