@@ -31,6 +31,7 @@ function NewWish() {
   const [sender, setSender] = useState("");
   const [recipient, setRecipient] = useState("");
   const [birthdayDate, setBirthdayDate] = useState("");
+  const [birthdayTime, setBirthdayTime] = useState("09:00");
   const [timezone, setTimezone] = useState(() => browserTimeZone());
   const zones = timeZoneList();
 
