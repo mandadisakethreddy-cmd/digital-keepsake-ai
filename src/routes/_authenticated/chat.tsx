@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { chatWithAI } from "@/lib/ai.functions";
+import { scheduleAssistant } from "@/lib/schedule-ai.functions";
+import { browserTimeZone } from "@/lib/tz";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/chat")({
