@@ -259,10 +259,13 @@ function NewWish() {
           </div>
         </div>
         <p className="text-xs text-muted-foreground">
-          🎁 {birthdayDate
-            ? `The surprise stays locked until ${birthdayDate} at ${birthdayTime || "00:00"} (${timezone}), then stays open for the viewing window you pick. Stored in UTC so it unlocks at the right moment anywhere in the world.`
-            : "No date set — the recipient can open it right away, and the viewing window starts now."}
+          🎁 {unlockPreview
+            ? `Locked until ${formatInTz(unlockPreview, timezone)} — the birthday person can open it only from that exact moment, and it stays open for the viewing window you picked.`
+            : "Pick the unlock date and time — the surprise opens only at that moment."}
         </p>
+        {unlockIsPast && (
+          <p className="text-xs text-destructive">Please pick a date and time in the future.</p>
+        )}
       </section>
 
       <section className="bday-card p-5 space-y-2">
