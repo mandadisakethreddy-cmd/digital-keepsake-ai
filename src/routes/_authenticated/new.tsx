@@ -127,12 +127,24 @@ function NewWish() {
       toast.error("Please fill sender, recipient and the letter");
       return;
     }
+    if (!birthdayDate || !birthdayTime) {
+      toast.error("Please pick the unlock date and time");
+      return;
+    }
+    let unlockUtc: Date;
+    try {
+      unlockUtc = zonedToUtc(birthdayDate, birthdayTime, timezone);
+    } catch {
+      toast.error("Invalid unlock date or time");
+      return;
+    }
+    if (Number.isNaN(unlockUtc.getTime()) || unlockUtc.getTime() <= Date.now()) {
+      toast.error("The unlock time must be in the future");
+      return;
+    }
     setBusy(true);
     try {
       const { data: u } = await supabase.auth.getUser();
-      const unlockUtc = birthdayDate
-        ? zonedToUtc(birthdayDate, birthdayTime || "00:00", timezone)
-        : new Date();
       const { data, error } = await supabase
         .from("wishes")
         .insert({
@@ -141,13 +153,13 @@ function NewWish() {
           recipient_name: recipient,
           letter,
           media_urls: media,
-          birthday_date: birthdayDate || null,
-          birthday_time: birthdayDate ? `${birthdayTime || "00:00"}:00` : null,
+          birthday_date: birthdayDate,
+          birthday_time: `${birthdayTime}:00`,
           view_duration_hours: viewHours,
           timezone,
           unlock_time_utc: unlockUtc.toISOString(),
-          event_status: unlockUtc.getTime() > Date.now() ? "scheduled" : "unlocked",
-          is_unlocked: unlockUtc.getTime() <= Date.now(),
+          event_status: "scheduled",
+          is_unlocked: false,
         })
         .select("share_token")
         .single();
