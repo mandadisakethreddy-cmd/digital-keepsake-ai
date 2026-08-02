@@ -66,12 +66,19 @@ export function utcToZonedParts(instant: Date, tz: string): { date: string; time
 }
 
 export function formatInTz(instant: Date, tz: string): string {
-  return new Intl.DateTimeFormat(undefined, {
-    timeZone: tz,
-    dateStyle: "medium",
-    timeStyle: "short",
+  const opts: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
     timeZoneName: "short",
-  }).format(instant);
+  };
+  try {
+    return new Intl.DateTimeFormat(undefined, { ...opts, timeZone: tz }).format(instant);
+  } catch {
+    return new Intl.DateTimeFormat(undefined, { ...opts, timeZone: "UTC" }).format(instant);
+  }
 }
 
 export function browserTimeZone(): string {
