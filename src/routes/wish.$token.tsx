@@ -137,19 +137,23 @@ function WishView() {
 
   // Keep the schedule in sync: if the creator reschedules, the countdown on
   // every open device updates on its own — no refresh needed.
-  useEffect(() => {
-    if (!wish || wish.is_unlocked) return;
-    const id = window.setInterval(() => void load(), 10_000);
-    return () => window.clearInterval(id);
-     
-  }, [wish?.is_unlocked, wish?.unlock_version, token]);
-
   const unlock = useMemo(() => (wish ? new Date(wish.unlock_time_utc) : null), [wish]);
   const expiry = useMemo(() => (wish ? computeExpiry(wish) : null), [wish]);
   const [now, setNow] = useState(() => Date.now());
   const serverNow = now + clockSkew;
+  // Time is the only gate: the surprise opens exactly at the scheduled moment
+  // (server clock), and closes when the viewing window ends.
+  const locked = unlock ? serverNow < unlock.getTime() : false;
   const expired = expiry ? expiry.getTime() < serverNow : false;
-  const locked = wish ? !wish.is_unlocked : false;
+
+  // Keep the schedule in sync: if the creator reschedules, the countdown on
+  // every open device updates on its own — no refresh needed.
+  useEffect(() => {
+    if (!wish || !locked) return;
+    const id = window.setInterval(() => void load(), 10_000);
+    return () => window.clearInterval(id);
+     
+  }, [locked, wish?.unlock_version, token]);
 
   // Countdown to unlock (while locked) or expiry
   useEffect(() => {
@@ -162,7 +166,6 @@ function WishView() {
       const diff = target - sn;
       if (diff <= 0) {
         setCountdown("");
-        if (unlock.getTime() <= sn && wish && !wish.is_unlocked) void load();
         return;
       }
       const d = Math.floor(diff / 86400_000);
