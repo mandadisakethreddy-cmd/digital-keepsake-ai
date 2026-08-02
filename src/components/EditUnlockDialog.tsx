@@ -71,6 +71,9 @@ export function EditUnlockDialog({
 
   const editable = !event.is_unlocked && (event.event_status === "draft" || event.event_status === "scheduled");
 
+  const todayInTz = useMemo(() => utcToZonedParts(new Date(), tz).date, [tz]);
+  const isPast = preview ? preview.getTime() <= Date.now() + 60_000 : true;
+
   async function doSave() {
     setBusy(true);
     try {
@@ -84,7 +87,7 @@ export function EditUnlockDialog({
           reason: reason || undefined,
         },
       });
-      toast.success("Your birthday surprise unlock time has been updated successfully.");
+      toast.success("Unlock time updated successfully.");
       onSaved(res);
       onClose();
     } catch (err) {
