@@ -201,9 +201,11 @@ function NewWish() {
         />
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs font-medium block mb-1">🎉 Birthday date (optional)</label>
+            <label className="text-xs font-medium block mb-1">🎉 Unlock date</label>
             <input
               type="date"
+              required
+              min={todayInTz}
               className="bday-input"
               value={birthdayDate}
               onChange={(e) => setBirthdayDate(e.target.value)}
@@ -213,9 +215,9 @@ function NewWish() {
             <label className="text-xs font-medium block mb-1">🕐 Unlock time</label>
             <input
               type="time"
+              required
               className="bday-input"
               value={birthdayTime}
-              disabled={!birthdayDate}
               onChange={(e) => setBirthdayTime(e.target.value)}
             />
           </div>
