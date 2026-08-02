@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { generateLetter } from "@/lib/ai.functions";
-import { browserTimeZone, timeZoneList, zonedToUtc } from "@/lib/tz";
+import { browserTimeZone, formatInTz, timeZoneList, utcToZonedParts, zonedToUtc } from "@/lib/tz";
 
 export const Route = createFileRoute("/_authenticated/new")({
   head: () => ({
@@ -34,6 +34,14 @@ function NewWish() {
   const [birthdayTime, setBirthdayTime] = useState("09:00");
   const [timezone, setTimezone] = useState(() => browserTimeZone());
   const zones = timeZoneList();
+  const todayInTz = utcToZonedParts(new Date(), timezone).date;
+  let unlockPreview: Date | null = null;
+  try {
+    unlockPreview = birthdayDate && birthdayTime ? zonedToUtc(birthdayDate, birthdayTime, timezone) : null;
+  } catch {
+    unlockPreview = null;
+  }
+  const unlockIsPast = !!unlockPreview && unlockPreview.getTime() <= Date.now();
 
   
   const [viewHours, setViewHours] = useState(24);
@@ -127,12 +135,24 @@ function NewWish() {
       toast.error("Please fill sender, recipient and the letter");
       return;
     }
+    if (!birthdayDate || !birthdayTime) {
+      toast.error("Please pick the unlock date and time");
+      return;
+    }
+    let unlockUtc: Date;
+    try {
+      unlockUtc = zonedToUtc(birthdayDate, birthdayTime, timezone);
+    } catch {
+      toast.error("Invalid unlock date or time");
+      return;
+    }
+    if (Number.isNaN(unlockUtc.getTime()) || unlockUtc.getTime() <= Date.now()) {
+      toast.error("The unlock time must be in the future");
+      return;
+    }
     setBusy(true);
     try {
       const { data: u } = await supabase.auth.getUser();
-      const unlockUtc = birthdayDate
-        ? zonedToUtc(birthdayDate, birthdayTime || "00:00", timezone)
-        : new Date();
       const { data, error } = await supabase
         .from("wishes")
         .insert({
@@ -141,13 +161,13 @@ function NewWish() {
           recipient_name: recipient,
           letter,
           media_urls: media,
-          birthday_date: birthdayDate || null,
-          birthday_time: birthdayDate ? `${birthdayTime || "00:00"}:00` : null,
+          birthday_date: birthdayDate,
+          birthday_time: `${birthdayTime}:00`,
           view_duration_hours: viewHours,
           timezone,
           unlock_time_utc: unlockUtc.toISOString(),
-          event_status: unlockUtc.getTime() > Date.now() ? "scheduled" : "unlocked",
-          is_unlocked: unlockUtc.getTime() <= Date.now(),
+          event_status: "scheduled",
+          is_unlocked: false,
         })
         .select("share_token")
         .single();
@@ -189,9 +209,11 @@ function NewWish() {
         />
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs font-medium block mb-1">🎉 Birthday date (optional)</label>
+            <label className="text-xs font-medium block mb-1">🎉 Unlock date</label>
             <input
               type="date"
+              required
+              min={todayInTz}
               className="bday-input"
               value={birthdayDate}
               onChange={(e) => setBirthdayDate(e.target.value)}
@@ -201,9 +223,9 @@ function NewWish() {
             <label className="text-xs font-medium block mb-1">🕐 Unlock time</label>
             <input
               type="time"
+              required
               className="bday-input"
               value={birthdayTime}
-              disabled={!birthdayDate}
               onChange={(e) => setBirthdayTime(e.target.value)}
             />
           </div>
@@ -237,10 +259,13 @@ function NewWish() {
           </div>
         </div>
         <p className="text-xs text-muted-foreground">
-          🎁 {birthdayDate
-            ? `The surprise stays locked until ${birthdayDate} at ${birthdayTime || "00:00"} (${timezone}), then stays open for the viewing window you pick. Stored in UTC so it unlocks at the right moment anywhere in the world.`
-            : "No date set — the recipient can open it right away, and the viewing window starts now."}
+          🎁 {unlockPreview
+            ? `Locked until ${formatInTz(unlockPreview, timezone)} — the birthday person can open it only from that exact moment, and it stays open for the viewing window you picked.`
+            : "Pick the unlock date and time — the surprise opens only at that moment."}
         </p>
+        {unlockIsPast && (
+          <p className="text-xs text-destructive">Please pick a date and time in the future.</p>
+        )}
       </section>
 
       <section className="bday-card p-5 space-y-2">
