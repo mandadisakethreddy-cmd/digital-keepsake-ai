@@ -136,7 +136,7 @@ export async function updateUnlockTimeCore(
         .eq("id", event.id);
     }
     throw new ScheduleError(
-      "This surprise has already been opened and cannot be locked again.",
+      "This surprise has already been opened and can no longer be rescheduled.",
       409,
     );
   }
