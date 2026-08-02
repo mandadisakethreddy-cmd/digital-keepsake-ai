@@ -23,6 +23,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as AuthenticatedSurpriseIdRouteImport } from './routes/_authenticated/surprise.$id'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as ApiEventsIdUnlockTimeRouteImport } from './routes/api/events/$id/unlock-time'
@@ -99,6 +100,11 @@ const Char91DotmcpChar93ListToolsRoute =
     path: '/.mcp/list-tools',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedSurpriseIdRoute = AuthenticatedSurpriseIdRouteImport.update({
+  id: '/surprise/$id',
+  path: '/surprise/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/wish/$token': typeof WishTokenRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/surprise/$id': typeof AuthenticatedSurpriseIdRoute
   '/api/events/$id/unlock-time': typeof ApiEventsIdUnlockTimeRoute
 }
 export interface FileRoutesByTo {
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/wish/$token': typeof WishTokenRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/surprise/$id': typeof AuthenticatedSurpriseIdRoute
   '/api/events/$id/unlock-time': typeof ApiEventsIdUnlockTimeRoute
 }
 export interface FileRoutesById {
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/wish/$token': typeof WishTokenRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/_authenticated/surprise/$id': typeof AuthenticatedSurpriseIdRoute
   '/api/events/$id/unlock-time': typeof ApiEventsIdUnlockTimeRoute
 }
 export interface FileRouteTypes {
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/wish/$token'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/surprise/$id'
     | '/api/events/$id/unlock-time'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/wish/$token'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/surprise/$id'
     | '/api/events/$id/unlock-time'
   id:
     | '__root__'
@@ -227,6 +238,7 @@ export interface FileRouteTypes {
     | '/wish/$token'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/_authenticated/surprise/$id'
     | '/api/events/$id/unlock-time'
   fileRoutesById: FileRoutesById
 }
@@ -347,6 +359,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/surprise/$id': {
+      id: '/_authenticated/surprise/$id'
+      path: '/surprise/$id'
+      fullPath: '/surprise/$id'
+      preLoaderRoute: typeof AuthenticatedSurpriseIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
       path: '/.mcp/invoke-tool/$tool'
@@ -375,12 +394,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedChatRoute: typeof AuthenticatedChatRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedNewRoute: typeof AuthenticatedNewRoute
+  AuthenticatedSurpriseIdRoute: typeof AuthenticatedSurpriseIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedChatRoute: AuthenticatedChatRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedNewRoute: AuthenticatedNewRoute,
+  AuthenticatedSurpriseIdRoute: AuthenticatedSurpriseIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

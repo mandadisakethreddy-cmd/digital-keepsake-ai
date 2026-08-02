@@ -71,6 +71,9 @@ export function EditUnlockDialog({
 
   const editable = !event.is_unlocked && (event.event_status === "draft" || event.event_status === "scheduled");
 
+  const todayInTz = useMemo(() => utcToZonedParts(new Date(), tz).date, [tz]);
+  const isPast = preview ? preview.getTime() <= Date.now() + 60_000 : true;
+
   async function doSave() {
     setBusy(true);
     try {
@@ -84,7 +87,7 @@ export function EditUnlockDialog({
           reason: reason || undefined,
         },
       });
-      toast.success("Your birthday surprise unlock time has been updated successfully.");
+      toast.success("Unlock time updated successfully.");
       onSaved(res);
       onClose();
     } catch (err) {
@@ -103,12 +106,13 @@ export function EditUnlockDialog({
         {!editable ? (
           <>
             <p className="text-sm">
-              This surprise has already been opened and cannot be locked again.
+              This surprise has already been opened and can no longer be rescheduled.
             </p>
             <button onClick={onClose} className="bday-btn px-4 py-2 text-sm w-full">Close</button>
           </>
         ) : confirming ? (
           <>
+            <p className="text-sm font-medium">Are you sure you want to change the unlock time?</p>
             <div className="text-sm space-y-3">
               <div>
                 <div className="text-xs text-muted-foreground">Current unlock time</div>
@@ -139,7 +143,7 @@ export function EditUnlockDialog({
             </p>
             <div>
               <label className="text-xs font-medium block mb-1">New unlock date</label>
-              <input type="date" className="bday-input" value={date} onChange={(e) => setDate(e.target.value)} />
+              <input type="date" min={todayInTz} className="bday-input" value={date} onChange={(e) => setDate(e.target.value)} />
             </div>
             <div>
               <label className="text-xs font-medium block mb-1">New unlock time</label>
@@ -165,8 +169,14 @@ export function EditUnlockDialog({
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              Stored in UTC as {preview ? preview.toISOString() : "—"}
+              Shown as {preview ? formatInTz(preview, tz) : "—"} · stored in UTC as{" "}
+              {preview ? preview.toISOString() : "—"}
             </p>
+            {preview && isPast && (
+              <p className="text-xs text-destructive">
+                Please pick a date and time in the future.
+              </p>
+            )}
 
             {logs && logs.length > 0 && (
               <details className="text-xs">
@@ -187,7 +197,7 @@ export function EditUnlockDialog({
               <button onClick={onClose} className="flex-1 border rounded-md py-2 text-sm">Cancel</button>
               <button
                 onClick={() => setConfirming(true)}
-                disabled={!preview}
+                disabled={!preview || isPast}
                 className="bday-btn flex-1 py-2 text-sm"
               >
                 Save Changes

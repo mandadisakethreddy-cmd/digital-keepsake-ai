@@ -121,18 +121,27 @@ function Dashboard() {
                 🔓 Unlocks {formatInTz(new Date(w.unlock_time_utc), w.timezone || "UTC")}
               </div>
 
-              {w.is_unlocked || w.event_status === "unlocked" ? (
-                <p className="text-xs text-muted-foreground">
-                  This surprise has already been opened and cannot be locked again.
-                </p>
-              ) : (
-                <button
-                  onClick={() => setEditing(w)}
+              <div className="flex items-center gap-2 flex-wrap">
+                <Link
+                  to="/surprise/$id"
+                  params={{ id: w.id }}
                   className="text-xs px-2 py-1 border rounded hover:bg-muted"
                 >
-                  🕐 Edit unlock time
-                </button>
-              )}
+                  View details
+                </Link>
+                {w.is_unlocked || w.event_status === "unlocked" ? (
+                  <span className="text-xs text-muted-foreground">
+                    This surprise has already been opened and can no longer be rescheduled.
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => setEditing(w)}
+                    className="text-xs px-2 py-1 border rounded hover:bg-muted"
+                  >
+                    🕐 Edit Unlock Time
+                  </button>
+                )}
+              </div>
 
               <div className="flex items-center gap-2 text-xs">
                 <input
