@@ -34,6 +34,14 @@ function NewWish() {
   const [birthdayTime, setBirthdayTime] = useState("09:00");
   const [timezone, setTimezone] = useState(() => browserTimeZone());
   const zones = timeZoneList();
+  const todayInTz = utcToZonedParts(new Date(), timezone).date;
+  let unlockPreview: Date | null = null;
+  try {
+    unlockPreview = birthdayDate && birthdayTime ? zonedToUtc(birthdayDate, birthdayTime, timezone) : null;
+  } catch {
+    unlockPreview = null;
+  }
+  const unlockIsPast = !!unlockPreview && unlockPreview.getTime() <= Date.now();
 
   
   const [viewHours, setViewHours] = useState(24);
