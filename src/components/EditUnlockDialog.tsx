@@ -197,7 +197,7 @@ export function EditUnlockDialog({
               <button onClick={onClose} className="flex-1 border rounded-md py-2 text-sm">Cancel</button>
               <button
                 onClick={() => setConfirming(true)}
-                disabled={!preview}
+                disabled={!preview || isPast}
                 className="bday-btn flex-1 py-2 text-sm"
               >
                 Save Changes
