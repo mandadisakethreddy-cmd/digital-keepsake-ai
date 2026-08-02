@@ -67,11 +67,8 @@ function playHappyBirthday(ctx: AudioContext) {
 }
 
 function computeExpiry(wish: Wish): Date {
-  // The viewing window starts when the surprise actually becomes openable.
-  const start = Math.max(
-    new Date(wish.unlock_time_utc).getTime(),
-    new Date(wish.created_at).getTime(),
-  );
+  // The viewing window always starts at the scheduled unlock moment.
+  const start = new Date(wish.unlock_time_utc).getTime();
   return new Date(start + wish.view_duration_hours * 3600_000);
 }
 
